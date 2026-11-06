@@ -1,0 +1,7 @@
+import path from "path"
+
+// Paths for sequelize-cli. It require()s this file and reads the named exports as CLI options
+export const config = path.resolve("src", "config", "sequelize-cli.js")
+export const modelsPath = path.resolve("src", "database", "models")
+export const migrationsPath = path.resolve("src", "database", "migrations")
+export const seedersPath = path.resolve("src", "database", "seeders")

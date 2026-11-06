@@ -1,0 +1,304 @@
+{
+    "data": [
+        {
+            "endpoint": "api/b2b/v3/general/document/closing_documents/download/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 100,
+            "seconds_number": 86400
+        },
+        {
+            "endpoint": "api/b2b/v3/general/document/closing_documents/info/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 100,
+            "seconds_number": 86400
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/custom/dump/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 100,
+            "seconds_number": 86400
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/incremental_reviews/dump/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 100,
+            "seconds_number": 86400
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/info/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/info/dump/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 100,
+            "seconds_number": 86400
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/info/incremental_dump/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 100,
+            "seconds_number": 86400
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status/",
+            "is_active": true,
+            "is_limited": false,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/order/booking/form/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/order/cancel/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/order/document/info_invoice/download/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/order/document/single_act/download/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/order/document/voucher/download/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/order/info/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/order/tickets/create/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/order/tickets/list/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/poi/dump/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 100,
+            "seconds_number": 86400
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/prebook/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/region/dump/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 100,
+            "seconds_number": 86400
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/reviews/dump/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 100,
+            "seconds_number": 86400
+        },
+        {
+            "endpoint": "api/b2b/v3/hotel/static/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 100,
+            "seconds_number": 86400
+        },
+        {
+            "endpoint": "api/b2b/v3/ordergroup/document/invoice/download/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/overview/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 100,
+            "seconds_number": 86400
+        },
+        {
+            "endpoint": "api/b2b/v3/profiles/create/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/profiles/delete/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/profiles/disable/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/profiles/edit/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/profiles/list/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/profiles/restore/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/search/hp/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 10,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/search/lookuprate/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/search/multicomplete/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/search/serp/geo/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 10,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/search/serp/hotels/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 150,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/b2b/v3/search/serp/region/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 10,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/content/v1/filter_values/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 10,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/content/v1/hotel_content_by_ids/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/content/v1/hotel_ids_by_filter/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 10,
+            "seconds_number": 60
+        },
+        {
+            "endpoint": "api/content/v1/hotel_reviews_by_ids/",
+            "is_active": true,
+            "is_limited": true,
+            "requests_number": 30,
+            "seconds_number": 60
+        }
+    ],
+    "debug": {
+        "api_endpoint": {
+            "endpoint": "api/b2b/v3/overview",
+            "is_active": true,
+            "is_limited": true,
+            "remaining": 99,
+            "requests_number": 100,
+            "reset": "2026-10-07T00:00:00",
+            "seconds_number": 86400
+        },
+        "request": {},
+        "method": "GET",
+        "real_ip": "154.113.86.136",
+        "request_id": "47a8c466286dae91de7a68df848d055d",
+        "key_id": 1163,
+        "api_key_id": 1163,
+        "utcnow": "2026-10-06T10:37:31.661837"
+    },
+    "status": "ok",
+    "error": null
+}

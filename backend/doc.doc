@@ -1,0 +1,11 @@
+
+    cloud_name: process.env.ENVIRONMENT === 'development' ? "dscn7bqto" : "dyznyextv",
+    api_key: process.env.ENVIRONMENT === 'development' ? "818343558147922" : "947912156327561",
+    api_secret: process.env.ENVIRONMENT === 'development' ? "xrpdyHOWIZjqFYkNnWVnlKqE8U0" : "jf7p6j9k0iWOpX8-yF4lj5BT2vQ"
+
+
+
+
+
+DB_PASSWORD = 2026@holiDaywaka.com
+holilrsv_dev

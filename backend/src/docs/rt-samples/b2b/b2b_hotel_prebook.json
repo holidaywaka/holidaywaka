@@ -1,0 +1,155 @@
+{
+    "data": {
+        "hotels": [
+            {
+                "id": "bronco_motel_south_central",
+                "hid": 6326890,
+                "rates": [
+                    {
+                        "book_hash": "p-bb11de5a-3011-4517-af8f-63ee9a7fcafd",
+                        "match_hash": "m-f151137f-8212-5845-8c30-a05b3cb3220d",
+                        "daily_prices": [
+                            "46.00",
+                            "46.00"
+                        ],
+                        "meal": "nomeal",
+                        "meal_data": {
+                            "value": "nomeal",
+                            "has_breakfast": false,
+                            "no_child_meal": true
+                        },
+                        "payment_options": {
+                            "payment_types": [
+                                {
+                                    "amount": "92.00",
+                                    "show_amount": "92.00",
+                                    "currency_code": "USD",
+                                    "show_currency_code": "USD",
+                                    "by": null,
+                                    "is_need_credit_card_data": false,
+                                    "is_need_cvc": false,
+                                    "type": "deposit",
+                                    "vat_data": {
+                                        "included": false,
+                                        "applied": false,
+                                        "amount": "0.00",
+                                        "currency_code": "USD",
+                                        "value": "0.00"
+                                    },
+                                    "tax_data": {},
+                                    "perks": {},
+                                    "commission_info": {
+                                        "show": {
+                                            "amount_gross": "92.00",
+                                            "amount_net": "92.00",
+                                            "amount_commission": "0.00"
+                                        },
+                                        "charge": {
+                                            "amount_gross": "92.00",
+                                            "amount_net": "92.00",
+                                            "amount_commission": "0.00"
+                                        }
+                                    },
+                                    "cancellation_penalties": {
+                                        "policies": [
+                                            {
+                                                "start_at": null,
+                                                "end_at": null,
+                                                "amount_charge": "92.00",
+                                                "amount_show": "92.00",
+                                                "commission_info": {
+                                                    "show": {
+                                                        "amount_gross": "102.22",
+                                                        "amount_net": "92.00",
+                                                        "amount_commission": "10.22"
+                                                    },
+                                                    "charge": {
+                                                        "amount_gross": "102.22",
+                                                        "amount_net": "92.00",
+                                                        "amount_commission": "10.22"
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        "free_cancellation_before": null
+                                    },
+                                    "recommended_price": null
+                                }
+                            ]
+                        },
+                        "bar_rate_price_data": null,
+                        "rg_ext": {
+                            "class": 3,
+                            "quality": 2,
+                            "sex": 0,
+                            "bathroom": 2,
+                            "bedding": 3,
+                            "family": 0,
+                            "capacity": 2,
+                            "club": 0,
+                            "bedrooms": 0,
+                            "balcony": 0,
+                            "view": 0,
+                            "floor": 0
+                        },
+                        "room_name": "Standard Double room (full double bed) (child meal not included)",
+                        "room_name_info": null,
+                        "serp_filters": [
+                            "has_bathroom"
+                        ],
+                        "sell_price_limits": null,
+                        "allotment": 2,
+                        "amenities_data": [
+                            "private-bathroom"
+                        ],
+                        "any_residency": true,
+                        "deposit": null,
+                        "no_show": {
+                            "amount": "0.00",
+                            "currency_code": "USD",
+                            "from_time": "00:00:00"
+                        },
+                        "room_data_trans": {
+                            "main_room_type": "Standard Double room",
+                            "main_name": "Standard Double room",
+                            "bathroom": null,
+                            "bedding_type": "full double bed",
+                            "misc_room_type": "child meal not included",
+                            "beds": []
+                        },
+                        "legal_info": null,
+                        "is_package": false
+                    }
+                ],
+                "bar_price_data": null
+            }
+        ],
+        "total_hotels": 1,
+        "changes": {
+            "price_changed": false
+        }
+    },
+    "debug": {
+        "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/prebook",
+            "is_active": true,
+            "is_limited": true,
+            "remaining": 29,
+            "requests_number": 30,
+            "reset": "2026-10-06T11:34:00",
+            "seconds_number": 60
+        },
+        "request": {
+            "hash": "h-bb11de5a-3011-4517-af8f-63ee9a7fcafd",
+            "price_increase_percent": 20
+        },
+        "method": "POST",
+        "real_ip": "154.113.86.136",
+        "request_id": "4656a75be83c055f48f74339236293ee",
+        "key_id": 1163,
+        "api_key_id": 1163,
+        "utcnow": "2026-10-06T11:33:26.734020"
+    },
+    "status": "ok",
+    "error": null
+}

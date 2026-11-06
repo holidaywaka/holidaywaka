@@ -1,0 +1,373 @@
+{
+    "data": [
+        {
+            "address": "5015 S Central Avenue Los Angeles,S Central Avenue, Los Angeles",
+            "amenity_groups": [
+                {
+                    "amenities": [
+                        "Air conditioning",
+                        "Smoke-free property",
+                        "Heating",
+                        "Reception desk"
+                    ],
+                    "non_free_amenities": null,
+                    "group_name": "General"
+                },
+                {
+                    "amenities": [
+                        "Fridge",
+                        "TV",
+                        "Hairdryer",
+                        "Shower/Bathtub",
+                        "Shower",
+                        "Toiletries"
+                    ],
+                    "non_free_amenities": null,
+                    "group_name": "Rooms"
+                },
+                {
+                    "amenities": [
+                        "Accessibility features",
+                        "Wheelchair Accessible"
+                    ],
+                    "non_free_amenities": null,
+                    "group_name": "Accessibility"
+                },
+                {
+                    "amenities": [
+                        "Free Wi-Fi",
+                        "Free internet"
+                    ],
+                    "non_free_amenities": null,
+                    "group_name": "Internet"
+                },
+                {
+                    "amenities": [
+                        "Parking"
+                    ],
+                    "non_free_amenities": null,
+                    "group_name": "Parking"
+                }
+            ],
+            "check_in_time": "14:00:00",
+            "check_in_time_end": null,
+            "check_out_time": "11:00:00",
+            "description_struct": [
+                {
+                    "paragraphs": [
+                        "Here’s all you need to spend a night! Mini-hotel «Bronco Motel South Central» is located in Los Angeles. This mini-hotel is located in 6 km from the city center. You can take a walk and explore the neighbourhood area of the mini-hotel — Crab Cove, Los Angeles Convention Center and Staples Center."
+                    ],
+                    "title": "Location"
+                },
+                {
+                    "paragraphs": [
+                        "Free Wi-Fi is available on the territory. Ask for more information when checking in. Specially for tourists who travel by car, there’s a parking zone."
+                    ],
+                    "title": "At the mini-hotel"
+                },
+                {
+                    "paragraphs": [
+                        "Guests will find the following in the room: a shower and a TV. The room equipment depends on its category."
+                    ],
+                    "title": "Room amenities"
+                }
+            ],
+            "email": "broncomotel@gmail.com",
+            "hotel_chain": "No chain",
+            "hid": 6326890,
+            "id": "bronco_motel_south_central",
+            "images_ext": [
+                {
+                    "url": "https://cdn.worldota.net/t/{size}/carsolize/ec/45/ec453a3cc061de4294c5ddf88b0568ac77ac9bc3.jpeg",
+                    "category_slug": "unspecified"
+                },
+                {
+                    "url": "https://cdn.worldota.net/t/{size}/carsolize/ba/79/ba793740199aed0f5e856599159e7a4cf6ec9049.jpeg",
+                    "category_slug": "unspecified"
+                },
+                {
+                    "url": "https://cdn.worldota.net/t/{size}/carsolize/4e/92/4e922f8d00cc6e532619b0916fdc350821857f97.jpeg",
+                    "category_slug": "unspecified"
+                },
+                {
+                    "url": "https://cdn.worldota.net/t/{size}/carsolize/6e/cd/6ecde5c6eaa3c826eda04e86c15e69778da7598e.jpeg",
+                    "category_slug": "unspecified"
+                },
+                {
+                    "url": "https://cdn.worldota.net/t/{size}/carsolize/df/6f/df6f1b09b2e1403c4f771c885fc4c37c5da43044.jpeg",
+                    "category_slug": "unspecified"
+                },
+                {
+                    "url": "https://cdn.worldota.net/t/{size}/content/bf/e7/bfe7d0d42fd0dcecf044b9db7671a9213efb9bb8.jpeg",
+                    "category_slug": "unspecified"
+                },
+                {
+                    "url": "https://cdn.worldota.net/t/{size}/content/93/cf/93cfb5aec0e471fd8c00b97c4478960efbab8db0.jpeg",
+                    "category_slug": "unspecified"
+                },
+                {
+                    "url": "https://cdn.worldota.net/t/{size}/content/13/37/13370a2a54206f11f2dcd1adc4d7e68deae8e701.jpeg",
+                    "category_slug": "unspecified"
+                },
+                {
+                    "url": "https://cdn.worldota.net/t/{size}/content/0a/fa/0afa8c3afa35176bbd797eb935b1252177936b88.jpeg",
+                    "category_slug": "unspecified"
+                },
+                {
+                    "url": "https://cdn.worldota.net/t/{size}/content/cb/a4/cba416381f3adbc21c9cd6e4e0fa7d2ce4d8eec0.jpeg",
+                    "category_slug": "unspecified"
+                },
+                {
+                    "url": "https://cdn.worldota.net/t/{size}/content/ab/d0/abd025b351c42f6e3ebc6c3cc997292112363cca.jpeg",
+                    "category_slug": "unspecified"
+                },
+                {
+                    "url": "https://cdn.worldota.net/t/{size}/content/cb/cc/cbccb1562d304301ea1a4b5e5466d1624d967d9d.JPEG",
+                    "category_slug": "unspecified"
+                },
+                {
+                    "url": "https://cdn.worldota.net/t/{size}/content/35/68/356823de36cc45983a5e6b2660fbfa376ccededa.JPEG",
+                    "category_slug": "unspecified"
+                }
+            ],
+            "kind": "mini_hotel",
+            "latitude": 33.99721,
+            "longitude": -118.25647,
+            "name": "Bronco Motel South Central",
+            "metapolicy_struct": {
+                "add_fee": [],
+                "check_in_check_out": [],
+                "children": [],
+                "children_meal": [],
+                "cot": [],
+                "deposit": [],
+                "extra_bed": [],
+                "internet": [],
+                "meal": [],
+                "no_show": {
+                    "availability": "unspecified",
+                    "day_period": "unspecified",
+                    "time": ""
+                },
+                "parking": [],
+                "pets": [],
+                "shuttle": [],
+                "visa": {
+                    "visa_support": "unspecified"
+                }
+            },
+            "metapolicy_extra_info": "<p><b>Fees</b> <br /><p>The following fees and deposits are charged by the property at time of service, check-in, or check-out. </p> <ul>                   <li>Rollaway bed fee: USD 15.00 per night</li>            </ul> <p>The above list may not be comprehensive. Fees and deposits may not include tax and are subject to change. </p></p>",
+            "phone": null,
+            "policy_struct": [
+                {
+                    "paragraphs": [
+                        "Information about the type of meals included in the price is indicated in the rate details."
+                    ],
+                    "title": "Meals"
+                },
+                {
+                    "paragraphs": [
+                        "<p><b>Fees</b> <br /><p>The following fees and deposits are charged by the property at time of service, check-in, or check-out. </p> <ul>                   <li>Rollaway bed fee: USD 15.00 per night</li>            </ul> <p>The above list may not be comprehensive. Fees and deposits may not include tax and are subject to change. </p></p>"
+                    ],
+                    "title": "Extra info"
+                }
+            ],
+            "postal_code": "CA 90011",
+            "region": {
+                "country_code": "US",
+                "iata": "LAX",
+                "id": 2011,
+                "name": "Los Angeles",
+                "type": "city"
+            },
+            "room_groups": [
+                {
+                    "name": "Economy room",
+                    "images": null,
+                    "images_ext": [],
+                    "name_struct": {
+                        "bathroom": "",
+                        "bedding_type": "",
+                        "main_name": "Economy room"
+                    },
+                    "room_amenities": [
+                        "private-bathroom"
+                    ],
+                    "room_group_id": 10,
+                    "rg_ext": {
+                        "balcony": 0,
+                        "bathroom": 2,
+                        "bedding": 0,
+                        "bedrooms": 0,
+                        "capacity": 0,
+                        "club": 0,
+                        "family": 0,
+                        "floor": 0,
+                        "quality": 1,
+                        "class": 3,
+                        "sex": 0,
+                        "view": 0
+                    },
+                    "size": null
+                },
+                {
+                    "name": "Economy Quadruple room",
+                    "images": null,
+                    "images_ext": [],
+                    "name_struct": {
+                        "bathroom": "",
+                        "bedding_type": "",
+                        "main_name": "Economy Quadruple room"
+                    },
+                    "room_amenities": [
+                        "private-bathroom"
+                    ],
+                    "room_group_id": 22819364,
+                    "rg_ext": {
+                        "balcony": 0,
+                        "bathroom": 2,
+                        "bedding": 7,
+                        "bedrooms": 0,
+                        "capacity": 4,
+                        "club": 0,
+                        "family": 0,
+                        "floor": 0,
+                        "quality": 1,
+                        "class": 3,
+                        "sex": 0,
+                        "view": 0
+                    },
+                    "size": null
+                },
+                {
+                    "name": "Standard room",
+                    "images": null,
+                    "images_ext": [],
+                    "name_struct": {
+                        "bathroom": "",
+                        "bedding_type": "",
+                        "main_name": "Standard room"
+                    },
+                    "room_amenities": [
+                        "private-bathroom"
+                    ],
+                    "room_group_id": 11,
+                    "rg_ext": {
+                        "balcony": 0,
+                        "bathroom": 2,
+                        "bedding": 0,
+                        "bedrooms": 0,
+                        "capacity": 0,
+                        "club": 0,
+                        "family": 0,
+                        "floor": 0,
+                        "quality": 2,
+                        "class": 3,
+                        "sex": 0,
+                        "view": 0
+                    },
+                    "size": null
+                },
+                {
+                    "name": "Standard Double room (full double bed)",
+                    "images": null,
+                    "images_ext": [],
+                    "name_struct": {
+                        "bathroom": "",
+                        "bedding_type": "full double bed",
+                        "main_name": "Standard Double room"
+                    },
+                    "room_amenities": [
+                        "private-bathroom"
+                    ],
+                    "room_group_id": 90,
+                    "rg_ext": {
+                        "balcony": 0,
+                        "bathroom": 2,
+                        "bedding": 3,
+                        "bedrooms": 0,
+                        "capacity": 2,
+                        "club": 0,
+                        "family": 0,
+                        "floor": 0,
+                        "quality": 2,
+                        "class": 3,
+                        "sex": 0,
+                        "view": 0
+                    },
+                    "size": null
+                }
+            ],
+            "star_rating": 2,
+            "serp_filters": [
+                "has_internet",
+                "has_parking",
+                "has_disabled_support",
+                "air_conditioning"
+            ],
+            "star_certificate": {
+                "valid_to": "",
+                "certificate_id": ""
+            },
+            "is_closed": false,
+            "facts": {
+                "electricity": {
+                    "frequency": [
+                        60
+                    ],
+                    "voltage": [
+                        120
+                    ],
+                    "sockets": [
+                        "a",
+                        "b"
+                    ]
+                },
+                "floors_number": 0,
+                "rooms_number": 18,
+                "year_built": 0,
+                "year_renovated": 0,
+                "register": null
+            },
+            "payment_methods": null,
+            "front_desk_time_start": null,
+            "front_desk_time_end": null,
+            "is_gender_specification_required": false,
+            "deleted": false,
+            "keys_pickup": {
+                "type": "unspecified",
+                "phone": "",
+                "is_contactless": false,
+                "email": "",
+                "apartment_office_address": "",
+                "apartment_extra_information": ""
+            },
+            "distance_center": null
+        }
+    ],
+    "debug": {
+        "api_endpoint": {
+            "endpoint": "api/content/v1/hotel_content_by_ids",
+            "is_active": true,
+            "is_limited": true,
+            "remaining": 29,
+            "requests_number": 30,
+            "reset": "2026-10-06T10:22:00",
+            "seconds_number": 60
+        },
+        "request": {
+            "hids": [
+                6326890
+            ],
+            "language": "en"
+        },
+        "method": "POST",
+        "real_ip": "154.113.86.136",
+        "request_id": "c3344196b33054502fd4a4ff85875a90",
+        "key_id": 1163,
+        "api_key_id": 1163,
+        "utcnow": "2026-10-06T10:21:11.377297"
+    },
+    "status": "ok",
+    "error": null
+}

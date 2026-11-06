@@ -1,0 +1,152 @@
+{
+  "data": [
+    {
+      "id": "lagoon_hotel_and_spa_alexandria",
+      "hid": 6291688,
+      "reviews": []
+    },
+    {
+      "id": "chalets_in_porto_sokhna_resort_units__20117__12018__20411",
+      "hid": 6296387,
+      "reviews": []
+    },
+    {
+      "id": "royal_central_hotel_the_palm",
+      "hid": 9015534,
+      "reviews": [
+        {
+          "id": 954301,
+          "review_plus": "Room was stunning and the view amazing.  Beds very comfy and the rooms serviced every day.\r\nHotel was spotless and staff always hard at work cleaning all the time.  The hotel had beautiful scents all around the hotel.\r\nStaff and hotel management were excellent",
+          "review_minus": "Couldn't fault this hotel on anything",
+          "created": "2023-10-02 07:07:24.044426+00",
+          "author": "Kerry",
+          "adults": 2,
+          "children": 0,
+          "room_name": "Superior Double room (full double bed)",
+          "nights": 8,
+          "images": null,
+          "detailed_review": {
+            "cleanness": 10,
+            "location": 8,
+            "price": 10,
+            "services": 10,
+            "room": 10,
+            "meal": 8,
+            "wifi": "perfect",
+            "hygiene": "unspecified"
+          },
+          "traveller_type": "unspecified",
+          "trip_type": "leisure",
+          "rating": 9.4
+        },
+        {
+          "id": 744816,
+          "review_plus": "Atlantis hotel and adventure park",
+          "review_minus": "This is not a real 5 star hotel. Maybe the employees are not paid well enough or something is happening but some of them are real rude and start arguing with you. I do agree that some of them are very nice and friendly - the concierge and baggage guys! The receptionists are rude and not polite",
+          "created": "2023-04-23 08:07:13.04657+00",
+          "author": "Andrei",
+          "adults": 2,
+          "children": 1,
+          "room_name": "Premium Double room (full double bed) (child bed not included)",
+          "nights": 8,
+          "images": null,
+          "detailed_review": {
+            "cleanness": 4,
+            "location": 9,
+            "price": 4,
+            "services": 3,
+            "room": 5,
+            "meal": 4,
+            "wifi": "perfect",
+            "hygiene": "unspecified"
+          },
+          "traveller_type": "unspecified",
+          "trip_type": "leisure",
+          "rating": 5.6
+        }
+      ]
+    },
+    {
+      "id": "w_dubai_mina_seyahi",
+      "hid": 10004873,
+      "reviews": [
+        {
+          "id": 1269042,
+          "review_plus": "Impeccable service and exceptional atmosphere",
+          "review_minus": "",
+          "created": "2024-08-15 12:36:49.819336+00",
+          "author": "Olga",
+          "adults": 1,
+          "children": 0,
+          "room_name": "Fantastic Double room with balcony (twin beds)",
+          "nights": 1,
+          "images": null,
+          "detailed_review": {
+            "cleanness": 10,
+            "location": 10,
+            "price": 10,
+            "services": 10,
+            "room": 10,
+            "meal": 10,
+            "wifi": "perfect",
+            "hygiene": "unspecified"
+          },
+          "traveller_type": "unspecified",
+          "trip_type": "leisure",
+          "rating": 10
+        },
+        {
+          "id": 584124,
+          "review_plus": "",
+          "review_minus": "Limited buffet\r\nNothing special very limited",
+          "created": "2022-10-03 07:30:48.136048+00",
+          "author": "Hazem",
+          "adults": 2,
+          "children": 0,
+          "room_name": "Standard Double room",
+          "nights": 0,
+          "images": null,
+          "detailed_review": {
+            "cleanness": 4,
+            "location": 5,
+            "price": 0,
+            "services": 1,
+            "room": 4,
+            "meal": 1,
+            "wifi": "downtime",
+            "hygiene": "no"
+          },
+          "traveller_type": "family",
+          "trip_type": "business",
+          "rating": 2.8
+        }
+      ]
+    }
+  ],
+  "debug": {
+    "api_endpoint": {
+      "endpoint": "api/content/v1/hotel_reviews_by_ids",
+      "is_active": true,
+      "is_limited": true,
+      "remaining": 9,
+      "requests_number": 10,
+      "reset": "2026-09-10T06:50:00",
+      "seconds_number": 60
+    },
+    "request": {
+      "hids": [
+        10004873,
+        9015534
+      ],
+      "language": "en"
+    },
+    "method": "POST",
+    "real_ip": "5.135.60.82",
+    "request_id": "0c9afc52f598a8f57e68f96edc8eb1b1",
+    "key_id": 1234,
+    "api_key_id": 1234,
+    "utcnow": "2026-09-10T06:49:46.069587"
+  },
+  "status": "ok",
+  "error": null
+}

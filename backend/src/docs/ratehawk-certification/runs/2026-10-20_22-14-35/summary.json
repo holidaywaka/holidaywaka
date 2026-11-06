@@ -1,0 +1,971 @@
+[
+  {
+    "id": "children",
+    "title": "Booking with children",
+    "requirement": "All partners: child age logic (HID 10004834, 1 room, 2 adults + children aged 0 and 17).",
+    "started_at": "2026-10-20T21:14:35.735Z",
+    "steps": [
+      {
+        "at": "2026-10-20T21:14:38.660Z",
+        "step": "hotelpage",
+        "summary": "18 rates",
+        "hid": 10004834,
+        "residency": "ng",
+        "guests": [
+          {
+            "adults": 2,
+            "children": [
+              0,
+              17
+            ]
+          }
+        ]
+      },
+      {
+        "at": "2026-10-20T21:14:38.955Z",
+        "step": "prebook",
+        "summary": "price unchanged (358 -> 358 USD)",
+        "book_hash": "p-55370896-a9d3-4bab-82a7-0decb9b39c7d",
+        "price_changed": false,
+        "original_amount": 358,
+        "amount": 358
+      },
+      {
+        "at": "2026-10-20T21:14:39.043Z",
+        "step": "checkout",
+        "summary": "HW-HOJTUGWR",
+        "booking_id": "57670e64-800d-4bc4-9ad1-5354f944f1fe"
+      },
+      {
+        "at": "2026-10-20T21:14:39.050Z",
+        "step": "payment confirmed",
+        "summary": "transaction marked PAID"
+      },
+      {
+        "at": "2026-10-20T21:16:12.564Z",
+        "step": "booking finished",
+        "summary": "confirmed (ok)",
+        "status": "confirmed",
+        "etg_status": "ok",
+        "partner_order_id": "cfb8546a-4e5a-4aec-be2b-c20685521fb9",
+        "etg_order_id": 100090331,
+        "failure_reason": null
+      },
+      {
+        "at": "2026-10-20T21:16:12.976Z",
+        "step": "order info",
+        "summary": "attempt 1: order_not_synced"
+      },
+      {
+        "at": "2026-10-20T21:16:28.593Z",
+        "step": "order info",
+        "summary": "retrieved (ETG status completed, HCN pending)"
+      },
+      {
+        "at": "2026-10-20T21:16:30.195Z",
+        "step": "cancel",
+        "summary": "cancelled",
+        "cancellation": {
+          "reason": "Certification test clean-up",
+          "penalty": 0,
+          "refund": 358,
+          "currency": "USD",
+          "amount_sell": {
+            "amount": 358,
+            "currency": "USD"
+          }
+        }
+      }
+    ],
+    "outcome": {
+      "status": "confirmed",
+      "etg_status": "ok",
+      "partner_order_id": "cfb8546a-4e5a-4aec-be2b-c20685521fb9",
+      "partner_order_ids": [
+        "cfb8546a-4e5a-4aec-be2b-c20685521fb9"
+      ],
+      "etg_order_id": 100090331,
+      "price_changed": false,
+      "booking_reference": "HW-HOJTUGWR",
+      "guests_sent": [
+        {
+          "guests": [
+            {
+              "first_name": "John",
+              "last_name": "Smith",
+              "is_child": false
+            },
+            {
+              "first_name": "Mary",
+              "last_name": "Smith",
+              "is_child": false
+            },
+            {
+              "first_name": "Tom",
+              "last_name": "Smith",
+              "is_child": true,
+              "age": 0
+            },
+            {
+              "first_name": "Anna",
+              "last_name": "Smith",
+              "is_child": true,
+              "age": 17
+            }
+          ]
+        }
+      ],
+      "cancel_error": null,
+      "cancellation": {
+        "reason": "Certification test clean-up",
+        "penalty": 0,
+        "refund": 358,
+        "currency": "USD",
+        "amount_sell": {
+          "amount": 358,
+          "currency": "USD"
+        }
+      }
+    },
+    "expected": {
+      "status": "confirmed"
+    },
+    "passed": true,
+    "finished_at": "2026-10-20T21:16:30.196Z"
+  },
+  {
+    "id": "multiroom",
+    "title": "Multiroom with mixed adults and children",
+    "requirement": "Multiroom partners: room 1 = 2 adults + child 3; room 2 = 2 adults + children 1, 5, 17 (HID 10004834).",
+    "started_at": "2026-10-20T21:16:30.199Z",
+    "steps": [
+      {
+        "at": "2026-10-20T21:16:30.926Z",
+        "step": "hotelpage",
+        "summary": "18 rates",
+        "hid": 10004834,
+        "residency": "ng",
+        "guests": [
+          {
+            "adults": 2,
+            "children": [
+              3
+            ]
+          },
+          {
+            "adults": 2,
+            "children": [
+              1,
+              5,
+              17
+            ]
+          }
+        ]
+      },
+      {
+        "at": "2026-10-20T21:16:31.194Z",
+        "step": "prebook",
+        "summary": "price unchanged (712 -> 712 USD)",
+        "book_hash": "p-d28f687a-5ae1-4676-add9-341ba01116e2",
+        "price_changed": false,
+        "original_amount": 712,
+        "amount": 712
+      },
+      {
+        "at": "2026-10-20T21:16:31.217Z",
+        "step": "checkout",
+        "summary": "HW-CGCWFC8W",
+        "booking_id": "97f21f79-5f10-4725-b487-95c4d4359047"
+      },
+      {
+        "at": "2026-10-20T21:16:31.221Z",
+        "step": "payment confirmed",
+        "summary": "transaction marked PAID"
+      },
+      {
+        "at": "2026-10-20T21:18:04.142Z",
+        "step": "booking finished",
+        "summary": "confirmed (ok)",
+        "status": "confirmed",
+        "etg_status": "ok",
+        "partner_order_id": "b55e5b93-a914-4ae0-9647-8b4ecbf818d2",
+        "etg_order_id": 100090333,
+        "failure_reason": null
+      },
+      {
+        "at": "2026-10-20T21:18:04.974Z",
+        "step": "order info",
+        "summary": "attempt 1: order_not_synced"
+      },
+      {
+        "at": "2026-10-20T21:18:21.424Z",
+        "step": "order info",
+        "summary": "retrieved (ETG status completed, HCN pending)"
+      },
+      {
+        "at": "2026-10-20T21:18:24.476Z",
+        "step": "cancel",
+        "summary": "cancelled",
+        "cancellation": {
+          "reason": "Certification test clean-up",
+          "penalty": 0,
+          "refund": 712,
+          "currency": "USD",
+          "amount_sell": {
+            "amount": 712,
+            "currency": "USD"
+          }
+        }
+      }
+    ],
+    "outcome": {
+      "status": "confirmed",
+      "etg_status": "ok",
+      "partner_order_id": "b55e5b93-a914-4ae0-9647-8b4ecbf818d2",
+      "partner_order_ids": [
+        "b55e5b93-a914-4ae0-9647-8b4ecbf818d2"
+      ],
+      "etg_order_id": 100090333,
+      "price_changed": false,
+      "booking_reference": "HW-CGCWFC8W",
+      "guests_sent": [
+        {
+          "guests": [
+            {
+              "first_name": "John",
+              "last_name": "Smith",
+              "is_child": false
+            },
+            {
+              "first_name": "Mary",
+              "last_name": "Smith",
+              "is_child": false
+            },
+            {
+              "first_name": "Tom",
+              "last_name": "Smith",
+              "is_child": true,
+              "age": 3
+            }
+          ]
+        },
+        {
+          "guests": [
+            {
+              "first_name": "Peter",
+              "last_name": "Brown",
+              "is_child": false
+            },
+            {
+              "first_name": "Grace",
+              "last_name": "Brown",
+              "is_child": false
+            },
+            {
+              "first_name": "Anna",
+              "last_name": "Smith",
+              "is_child": true,
+              "age": 1
+            },
+            {
+              "first_name": "Leo",
+              "last_name": "Brown",
+              "is_child": true,
+              "age": 5
+            },
+            {
+              "first_name": "Mia",
+              "last_name": "Brown",
+              "is_child": true,
+              "age": 17
+            }
+          ]
+        }
+      ],
+      "cancel_error": null,
+      "cancellation": {
+        "reason": "Certification test clean-up",
+        "penalty": 0,
+        "refund": 712,
+        "currency": "USD",
+        "amount_sell": {
+          "amount": 712,
+          "currency": "USD"
+        }
+      }
+    },
+    "expected": {
+      "status": "confirmed"
+    },
+    "passed": true,
+    "finished_at": "2026-10-20T21:18:24.477Z"
+  },
+  {
+    "id": "uzbekistan",
+    "title": "Booking with Uzbekistan guest citizenship",
+    "requirement": "All partners: residency sent correctly in search (HID 10004834, residency uz, 1 room, 2 adults).",
+    "started_at": "2026-10-20T21:18:24.483Z",
+    "steps": [
+      {
+        "at": "2026-10-20T21:18:25.405Z",
+        "step": "hotelpage",
+        "summary": "18 rates",
+        "hid": 10004834,
+        "residency": "uz",
+        "guests": [
+          {
+            "adults": 2,
+            "children": []
+          }
+        ]
+      },
+      {
+        "at": "2026-10-20T21:18:25.884Z",
+        "step": "prebook",
+        "summary": "price unchanged (358 -> 358 USD)",
+        "book_hash": "p-d5264d8a-da28-4189-8e1d-d23e0f142861",
+        "price_changed": false,
+        "original_amount": 358,
+        "amount": 358
+      },
+      {
+        "at": "2026-10-20T21:18:25.925Z",
+        "step": "checkout",
+        "summary": "HW-BVX8NA1K",
+        "booking_id": "49888dc8-f1cf-4f1d-a8d4-009d7f932e4c"
+      },
+      {
+        "at": "2026-10-20T21:18:25.931Z",
+        "step": "payment confirmed",
+        "summary": "transaction marked PAID"
+      },
+      {
+        "at": "2026-10-20T21:19:58.174Z",
+        "step": "booking finished",
+        "summary": "confirmed (ok)",
+        "status": "confirmed",
+        "etg_status": "ok",
+        "partner_order_id": "4f7bcd65-0bfb-4dd1-9431-710deefb1a40",
+        "etg_order_id": 100090335,
+        "failure_reason": null
+      },
+      {
+        "at": "2026-10-20T21:19:58.576Z",
+        "step": "order info",
+        "summary": "attempt 1: order_not_synced"
+      },
+      {
+        "at": "2026-10-20T21:20:14.501Z",
+        "step": "order info",
+        "summary": "retrieved (ETG status completed, HCN pending)"
+      },
+      {
+        "at": "2026-10-20T21:20:16.856Z",
+        "step": "cancel",
+        "summary": "cancelled",
+        "cancellation": {
+          "reason": "Certification test clean-up",
+          "penalty": 0,
+          "refund": 358,
+          "currency": "USD",
+          "amount_sell": {
+            "amount": 358,
+            "currency": "USD"
+          }
+        }
+      }
+    ],
+    "outcome": {
+      "status": "confirmed",
+      "etg_status": "ok",
+      "partner_order_id": "4f7bcd65-0bfb-4dd1-9431-710deefb1a40",
+      "partner_order_ids": [
+        "4f7bcd65-0bfb-4dd1-9431-710deefb1a40"
+      ],
+      "etg_order_id": 100090335,
+      "price_changed": false,
+      "booking_reference": "HW-BVX8NA1K",
+      "guests_sent": [
+        {
+          "guests": [
+            {
+              "first_name": "John",
+              "last_name": "Smith",
+              "is_child": false
+            },
+            {
+              "first_name": "Mary",
+              "last_name": "Smith",
+              "is_child": false
+            }
+          ]
+        }
+      ],
+      "cancel_error": null,
+      "cancellation": {
+        "reason": "Certification test clean-up",
+        "penalty": 0,
+        "refund": 358,
+        "currency": "USD",
+        "amount_sell": {
+          "amount": 358,
+          "currency": "USD"
+        }
+      }
+    },
+    "expected": {
+      "status": "confirmed"
+    },
+    "passed": true,
+    "finished_at": "2026-10-20T21:20:16.856Z"
+  },
+  {
+    "id": "price-increase",
+    "title": "Rate price increase at prebook",
+    "requirement": "Partners allowing price changes: price_increase_percent and book_hash logic (HID 8819557, 10% increase). The guest is shown the new price before booking.",
+    "started_at": "2026-10-20T21:20:16.860Z",
+    "steps": [
+      {
+        "at": "2026-10-20T21:20:17.929Z",
+        "step": "hotelpage",
+        "summary": "12 rates",
+        "hid": 8819557,
+        "residency": "ng",
+        "guests": [
+          {
+            "adults": 2,
+            "children": []
+          }
+        ]
+      },
+      {
+        "at": "2026-10-20T21:20:18.412Z",
+        "step": "prebook",
+        "summary": "price changed (250 -> 275 USD)",
+        "book_hash": "p-422069e8-5c26-4ce8-b29e-832de140e583",
+        "price_changed": true,
+        "original_amount": 250,
+        "amount": 275
+      },
+      {
+        "at": "2026-10-20T21:20:18.436Z",
+        "step": "checkout",
+        "summary": "HW-PZZDKSPT",
+        "booking_id": "d891add9-b2dd-4861-bd22-d77a77a430bb"
+      },
+      {
+        "at": "2026-10-20T21:20:18.441Z",
+        "step": "payment confirmed",
+        "summary": "transaction marked PAID"
+      },
+      {
+        "at": "2026-10-20T21:22:28.902Z",
+        "step": "booking finished",
+        "summary": "confirmed (ok)",
+        "status": "confirmed",
+        "etg_status": "ok",
+        "partner_order_id": "d79b693f-9e0a-45a7-bf9e-e52bdd814034",
+        "etg_order_id": 100090337,
+        "failure_reason": null
+      },
+      {
+        "at": "2026-10-20T21:22:29.288Z",
+        "step": "order info",
+        "summary": "attempt 1: order_not_synced"
+      },
+      {
+        "at": "2026-10-20T21:22:45.135Z",
+        "step": "order info",
+        "summary": "retrieved (ETG status completed, HCN pending)"
+      },
+      {
+        "at": "2026-10-20T21:22:46.701Z",
+        "step": "cancel",
+        "summary": "cancelled",
+        "cancellation": {
+          "reason": "Certification test clean-up",
+          "penalty": 0,
+          "refund": 275,
+          "currency": "USD",
+          "amount_sell": {
+            "amount": 275,
+            "currency": "USD"
+          }
+        }
+      }
+    ],
+    "outcome": {
+      "status": "confirmed",
+      "etg_status": "ok",
+      "partner_order_id": "d79b693f-9e0a-45a7-bf9e-e52bdd814034",
+      "partner_order_ids": [
+        "d79b693f-9e0a-45a7-bf9e-e52bdd814034"
+      ],
+      "etg_order_id": 100090337,
+      "price_changed": true,
+      "booking_reference": "HW-PZZDKSPT",
+      "guests_sent": [
+        {
+          "guests": [
+            {
+              "first_name": "John",
+              "last_name": "Smith",
+              "is_child": false
+            },
+            {
+              "first_name": "Mary",
+              "last_name": "Smith",
+              "is_child": false
+            }
+          ]
+        }
+      ],
+      "cancel_error": null,
+      "cancellation": {
+        "reason": "Certification test clean-up",
+        "penalty": 0,
+        "refund": 275,
+        "currency": "USD",
+        "amount_sell": {
+          "amount": 275,
+          "currency": "USD"
+        }
+      }
+    },
+    "expected": {
+      "status": "confirmed",
+      "priceChanged": true
+    },
+    "passed": true,
+    "finished_at": "2026-10-20T21:22:46.701Z"
+  },
+  {
+    "id": "unknown-success",
+    "title": "Success after unknown error",
+    "requirement": "All partners: keep polling /booking/finish/status/ after `unknown` until `ok` (partner_order_id suffix unknown_success).",
+    "started_at": "2026-10-20T21:22:46.705Z",
+    "steps": [
+      {
+        "at": "2026-10-20T21:22:47.269Z",
+        "step": "hotelpage",
+        "summary": "18 rates",
+        "hid": 10004834,
+        "residency": "ng",
+        "guests": [
+          {
+            "adults": 2,
+            "children": []
+          }
+        ]
+      },
+      {
+        "at": "2026-10-20T21:22:47.614Z",
+        "step": "prebook",
+        "summary": "price unchanged (358 -> 358 USD)",
+        "book_hash": "p-7e122ab6-0446-473a-bba1-e7c72484f3c2",
+        "price_changed": false,
+        "original_amount": 358,
+        "amount": 358
+      },
+      {
+        "at": "2026-10-20T21:22:47.651Z",
+        "step": "checkout",
+        "summary": "HW-PLG1DI9E",
+        "booking_id": "b74c8639-ef40-461d-9bab-e59032cc8720"
+      },
+      {
+        "at": "2026-10-20T21:22:47.660Z",
+        "step": "payment confirmed",
+        "summary": "transaction marked PAID"
+      },
+      {
+        "at": "2026-10-20T21:23:40.571Z",
+        "step": "booking finished",
+        "summary": "confirmed (ok)",
+        "status": "confirmed",
+        "etg_status": "ok",
+        "partner_order_id": "6c5cb20f-595a-4e3b-8a66-b69cf0293df2-unknown_success",
+        "etg_order_id": 100090339,
+        "failure_reason": null
+      },
+      {
+        "at": "2026-10-20T21:23:41.048Z",
+        "step": "order info",
+        "summary": "attempt 1: order_not_synced"
+      },
+      {
+        "at": "2026-10-20T21:23:56.701Z",
+        "step": "order info",
+        "summary": "retrieved (ETG status completed, HCN pending)"
+      },
+      {
+        "at": "2026-10-20T21:23:58.503Z",
+        "step": "cancel",
+        "summary": "cancelled",
+        "cancellation": {
+          "reason": "Certification test clean-up",
+          "penalty": 0,
+          "refund": 358,
+          "currency": "USD",
+          "amount_sell": {
+            "amount": 358,
+            "currency": "USD"
+          }
+        }
+      }
+    ],
+    "outcome": {
+      "status": "confirmed",
+      "etg_status": "ok",
+      "partner_order_id": "6c5cb20f-595a-4e3b-8a66-b69cf0293df2-unknown_success",
+      "partner_order_ids": [
+        "6c5cb20f-595a-4e3b-8a66-b69cf0293df2-unknown_success"
+      ],
+      "etg_order_id": 100090339,
+      "price_changed": false,
+      "booking_reference": "HW-PLG1DI9E",
+      "guests_sent": [
+        {
+          "guests": [
+            {
+              "first_name": "John",
+              "last_name": "Smith",
+              "is_child": false
+            },
+            {
+              "first_name": "Mary",
+              "last_name": "Smith",
+              "is_child": false
+            }
+          ]
+        }
+      ],
+      "cancel_error": null,
+      "cancellation": {
+        "reason": "Certification test clean-up",
+        "penalty": 0,
+        "refund": 358,
+        "currency": "USD",
+        "amount_sell": {
+          "amount": 358,
+          "currency": "USD"
+        }
+      }
+    },
+    "expected": {
+      "status": "confirmed"
+    },
+    "passed": true,
+    "finished_at": "2026-10-20T21:23:58.503Z"
+  },
+  {
+    "id": "unknown-soldout",
+    "title": "Failed with soldout after unknown error",
+    "requirement": "All partners: keep polling until `soldout`, then mark the booking failed (suffix unknown_soldout).",
+    "started_at": "2026-10-20T21:23:58.506Z",
+    "steps": [
+      {
+        "at": "2026-10-20T21:23:58.509Z",
+        "step": "hotelpage",
+        "summary": "18 rates",
+        "hid": 10004834,
+        "residency": "ng",
+        "guests": [
+          {
+            "adults": 2,
+            "children": []
+          }
+        ]
+      },
+      {
+        "at": "2026-10-20T21:23:59.048Z",
+        "step": "prebook",
+        "summary": "price unchanged (358 -> 358 USD)",
+        "book_hash": "p-7e122ab6-0446-473a-bba1-e7c72484f3c2",
+        "price_changed": false,
+        "original_amount": 358,
+        "amount": 358
+      },
+      {
+        "at": "2026-10-20T21:23:59.079Z",
+        "step": "checkout",
+        "summary": "HW-SU3GRXAV",
+        "booking_id": "6c7232cc-1842-4259-b6db-b60d2d32702f"
+      },
+      {
+        "at": "2026-10-20T21:23:59.083Z",
+        "step": "payment confirmed",
+        "summary": "transaction marked PAID"
+      },
+      {
+        "at": "2026-10-20T21:24:53.175Z",
+        "step": "booking finished",
+        "summary": "failed (soldout)",
+        "status": "failed",
+        "etg_status": "soldout",
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout",
+        "etg_order_id": 100090343,
+        "failure_reason": "The room sold out at the hotel before it could be confirmed"
+      }
+    ],
+    "outcome": {
+      "status": "failed",
+      "etg_status": "soldout",
+      "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout",
+      "partner_order_ids": [
+        "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      ],
+      "etg_order_id": 100090343,
+      "price_changed": false,
+      "booking_reference": "HW-SU3GRXAV",
+      "guests_sent": [
+        {
+          "guests": [
+            {
+              "first_name": "John",
+              "last_name": "Smith",
+              "is_child": false
+            },
+            {
+              "first_name": "Mary",
+              "last_name": "Smith",
+              "is_child": false
+            }
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "status": "failed",
+      "etgStatus": "soldout"
+    },
+    "passed": true,
+    "finished_at": "2026-10-20T21:24:53.175Z"
+  },
+  {
+    "id": "unknown-book-limit",
+    "title": "Failed with book_limit after unknown error",
+    "requirement": "All partners: identify `book_limit` and fail the booking (suffix unknown_book_limit).",
+    "started_at": "2026-10-20T21:24:53.176Z",
+    "steps": [
+      {
+        "at": "2026-10-20T21:24:53.179Z",
+        "step": "hotelpage",
+        "summary": "18 rates",
+        "hid": 10004834,
+        "residency": "ng",
+        "guests": [
+          {
+            "adults": 2,
+            "children": []
+          }
+        ]
+      },
+      {
+        "at": "2026-10-20T21:24:53.462Z",
+        "step": "prebook",
+        "summary": "price unchanged (358 -> 358 USD)",
+        "book_hash": "p-7e122ab6-0446-473a-bba1-e7c72484f3c2",
+        "price_changed": false,
+        "original_amount": 358,
+        "amount": 358
+      },
+      {
+        "at": "2026-10-20T21:24:53.481Z",
+        "step": "checkout",
+        "summary": "HW-7TIBIOUH",
+        "booking_id": "635b904b-bbd3-4ef0-bd43-7e01eb932ab2"
+      },
+      {
+        "at": "2026-10-20T21:24:53.485Z",
+        "step": "payment confirmed",
+        "summary": "transaction marked PAID"
+      },
+      {
+        "at": "2026-10-20T21:27:55.698Z",
+        "step": "booking finished",
+        "summary": "failed (book_limit)",
+        "status": "failed",
+        "etg_status": "book_limit",
+        "partner_order_id": "fb1bac3c-db54-4ec1-82d6-9383da80aa43-unknown_book_limit",
+        "etg_order_id": 100090347,
+        "failure_reason": "The hotel's booking cut-off was reached"
+      }
+    ],
+    "outcome": {
+      "status": "failed",
+      "etg_status": "book_limit",
+      "partner_order_id": "fb1bac3c-db54-4ec1-82d6-9383da80aa43-unknown_book_limit",
+      "partner_order_ids": [
+        "fb1bac3c-db54-4ec1-82d6-9383da80aa43-unknown_book_limit"
+      ],
+      "etg_order_id": 100090347,
+      "price_changed": false,
+      "booking_reference": "HW-7TIBIOUH",
+      "guests_sent": [
+        {
+          "guests": [
+            {
+              "first_name": "John",
+              "last_name": "Smith",
+              "is_child": false
+            },
+            {
+              "first_name": "Mary",
+              "last_name": "Smith",
+              "is_child": false
+            }
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "status": "failed",
+      "etgStatus": "book_limit"
+    },
+    "passed": true,
+    "finished_at": "2026-10-20T21:27:55.698Z"
+  },
+  {
+    "id": "cancel-not-cancellable",
+    "title": "Cancellation: order_not_cancellable",
+    "requirement": "Sandbox error reproduction: booking created with suffix order_not_cancellable, cancellation must surface order_not_cancellable.",
+    "started_at": "2026-10-20T21:27:55.701Z",
+    "steps": [
+      {
+        "at": "2026-10-20T21:27:55.703Z",
+        "step": "hotelpage",
+        "summary": "18 rates",
+        "hid": 10004834,
+        "residency": "ng",
+        "guests": [
+          {
+            "adults": 2,
+            "children": []
+          }
+        ]
+      },
+      {
+        "at": "2026-10-20T21:27:56.043Z",
+        "step": "prebook",
+        "summary": "price unchanged (358 -> 358 USD)",
+        "book_hash": "p-7e122ab6-0446-473a-bba1-e7c72484f3c2",
+        "price_changed": false,
+        "original_amount": 358,
+        "amount": 358
+      },
+      {
+        "at": "2026-10-20T21:27:56.062Z",
+        "step": "checkout",
+        "summary": "HW-CU2S78Y2",
+        "booking_id": "a64ce027-3785-4a0d-b8f9-90910369c7a1"
+      },
+      {
+        "at": "2026-10-20T21:27:56.068Z",
+        "step": "payment confirmed",
+        "summary": "transaction marked PAID"
+      },
+      {
+        "at": "2026-10-20T21:29:52.249Z",
+        "step": "booking finished",
+        "summary": "confirmed (ok)",
+        "status": "confirmed",
+        "etg_status": "ok",
+        "partner_order_id": "74bbd1d3-d11f-4d93-bf4c-98d676da8ec9-order_not_cancellable",
+        "etg_order_id": 100090349,
+        "failure_reason": null
+      },
+      {
+        "at": "2026-10-20T21:29:52.863Z",
+        "step": "order info",
+        "summary": "attempt 1: order_not_synced"
+      },
+      {
+        "at": "2026-10-20T21:30:08.506Z",
+        "step": "order info",
+        "summary": "retrieved (ETG status completed, HCN pending)"
+      },
+      {
+        "at": "2026-10-20T21:30:55.155Z",
+        "step": "cancel",
+        "summary": "cancelled",
+        "cancellation": {
+          "reason": "Certification test clean-up",
+          "penalty": 0,
+          "refund": 358,
+          "currency": "USD",
+          "amount_sell": {
+            "amount": 358,
+            "currency": "USD"
+          }
+        }
+      }
+    ],
+    "outcome": {
+      "status": "confirmed",
+      "etg_status": "ok",
+      "partner_order_id": "74bbd1d3-d11f-4d93-bf4c-98d676da8ec9-order_not_cancellable",
+      "partner_order_ids": [
+        "74bbd1d3-d11f-4d93-bf4c-98d676da8ec9-order_not_cancellable"
+      ],
+      "etg_order_id": 100090349,
+      "price_changed": false,
+      "booking_reference": "HW-CU2S78Y2",
+      "guests_sent": [
+        {
+          "guests": [
+            {
+              "first_name": "John",
+              "last_name": "Smith",
+              "is_child": false
+            },
+            {
+              "first_name": "Mary",
+              "last_name": "Smith",
+              "is_child": false
+            }
+          ]
+        }
+      ],
+      "cancel_error": null,
+      "cancellation": {
+        "reason": "Certification test clean-up",
+        "penalty": 0,
+        "refund": 358,
+        "currency": "USD",
+        "amount_sell": {
+          "amount": 358,
+          "currency": "USD"
+        }
+      }
+    },
+    "expected": {
+      "status": "confirmed",
+      "cancelError": "order_not_cancellable"
+    },
+    "passed": false,
+    "finished_at": "2026-10-20T21:30:55.156Z"
+  },
+  {
+    "id": "cancel-not-found",
+    "title": "Cancellation: order_not_found",
+    "requirement": "Sandbox error reproduction: cancelling a nonexistent partner_order_id returns order_not_found.",
+    "started_at": "2026-10-20T21:30:55.158Z",
+    "steps": [
+      {
+        "at": "2026-10-20T21:30:55.394Z",
+        "step": "cancel nonexistent order",
+        "summary": "order_not_found",
+        "partner_order_id": "7a3cba02-54d2-454a-9091-db74f0f23dae"
+      }
+    ],
+    "outcome": {
+      "cancel_error": "order_not_found"
+    },
+    "expected": {
+      "cancelError": "order_not_found"
+    },
+    "passed": true,
+    "finished_at": "2026-10-20T21:30:55.395Z"
+  }
+]

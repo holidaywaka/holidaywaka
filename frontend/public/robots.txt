@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Admin dashboard
+Disallow: /admin-portal/
+
+# Account and authentication screens
+Disallow: /login
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-email/
+
+# Checkout, payment and booking-status screens (private to each customer)
+Disallow: /hotel-checkout/
+Disallow: /hotel-booking/
+Disallow: /verify-payment/
+Disallow: /upload-payment
+Disallow: /upload-submission
+Disallow: /packages/*/checkout
+Disallow: /qr
+
+Sitemap: https://holidaywaka.com/sitemap.xml

@@ -1,0 +1,68 @@
+{
+    "data": {
+        "hids": [
+            6326890,
+            6823732,
+            6918461,
+            7665488,
+            7686736,
+            7726831,
+            7751998,
+            8626359,
+            8819557,
+            9845515,
+            10280040
+        ],
+        "ids": [
+            "bronco_motel_south_central",
+            "central_inn_motel",
+            "crescent_inn_2",
+            "el_dorado_motel_gardena",
+            "el_rancho_motel_4",
+            "foxys_den_motel",
+            "park_motel_12",
+            "rosa_bell_motel_los_angeles",
+            "seaway_motel_4",
+            "walls_motel_long_beach_2",
+            "wilshire_apartment"
+        ]
+    },
+    "debug": {
+        "api_endpoint": {
+            "endpoint": "api/content/v1/hotel_ids_by_filter",
+            "is_active": true,
+            "is_limited": true,
+            "remaining": 9,
+            "requests_number": 10,
+            "reset": "2026-10-06T10:14:00",
+            "seconds_number": 60
+        },
+        "request": {
+            "serp_filter": [
+                "air_conditioning",
+                "has_airport_transfer",
+                "beach",
+                "has_internet",
+                "has_kids",
+                "kitchen"
+            ],
+            "kind": [
+                "Mini-hotel"
+            ],
+            "country": [
+                201
+            ],
+            "suplier_type": [
+                "all"
+            ]
+        },
+        "method": "POST",
+        "real_ip": "154.113.86.136",
+        "request_id": "1e94e29dc32abc9ea34fcb2d23db5b4e",
+        "key_id": 1163,
+        "api_key_id": 1163,
+        "utcnow": "2026-10-06T10:13:29.437721"
+    },
+    "status": "ok",
+    "error": null
+}

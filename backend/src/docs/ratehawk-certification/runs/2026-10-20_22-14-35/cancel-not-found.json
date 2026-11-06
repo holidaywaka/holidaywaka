@@ -1,0 +1,59 @@
+{
+  "id": "cancel-not-found",
+  "title": "Cancellation: order_not_found",
+  "requirement": "Sandbox error reproduction: cancelling a nonexistent partner_order_id returns order_not_found.",
+  "started_at": "2026-10-20T21:30:55.158Z",
+  "steps": [
+    {
+      "at": "2026-10-20T21:30:55.394Z",
+      "step": "cancel nonexistent order",
+      "summary": "order_not_found",
+      "partner_order_id": "7a3cba02-54d2-454a-9091-db74f0f23dae"
+    }
+  ],
+  "exchanges": [
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/cancel/",
+      "request": {
+        "partner_order_id": "7a3cba02-54d2-454a-9091-db74f0f23dae"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/cancel",
+            "is_active": true,
+            "is_limited": true,
+            "remaining": 27,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:31:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "7a3cba02-54d2-454a-9091-db74f0f23dae"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "95449cbacadc63ec9bdced2d064ff2c6",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:30:56.770712"
+        },
+        "status": "error",
+        "error": "order_not_found"
+      },
+      "httpStatus": 200,
+      "durationMs": 236,
+      "at": "2026-10-20T21:30:55.158Z"
+    }
+  ],
+  "outcome": {
+    "cancel_error": "order_not_found"
+  },
+  "expected": {
+    "cancelError": "order_not_found"
+  },
+  "passed": true,
+  "finished_at": "2026-10-20T21:30:55.395Z"
+}

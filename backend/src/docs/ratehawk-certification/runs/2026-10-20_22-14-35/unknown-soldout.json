@@ -1,0 +1,1374 @@
+{
+  "id": "unknown-soldout",
+  "title": "Failed with soldout after unknown error",
+  "requirement": "All partners: keep polling until `soldout`, then mark the booking failed (suffix unknown_soldout).",
+  "started_at": "2026-10-20T21:23:58.506Z",
+  "steps": [
+    {
+      "at": "2026-10-20T21:23:58.509Z",
+      "step": "hotelpage",
+      "summary": "18 rates",
+      "hid": 10004834,
+      "residency": "ng",
+      "guests": [
+        {
+          "adults": 2,
+          "children": []
+        }
+      ]
+    },
+    {
+      "at": "2026-10-20T21:23:59.048Z",
+      "step": "prebook",
+      "summary": "price unchanged (358 -> 358 USD)",
+      "book_hash": "p-7e122ab6-0446-473a-bba1-e7c72484f3c2",
+      "price_changed": false,
+      "original_amount": 358,
+      "amount": 358
+    },
+    {
+      "at": "2026-10-20T21:23:59.079Z",
+      "step": "checkout",
+      "summary": "HW-SU3GRXAV",
+      "booking_id": "6c7232cc-1842-4259-b6db-b60d2d32702f"
+    },
+    {
+      "at": "2026-10-20T21:23:59.083Z",
+      "step": "payment confirmed",
+      "summary": "transaction marked PAID"
+    },
+    {
+      "at": "2026-10-20T21:24:53.175Z",
+      "step": "booking finished",
+      "summary": "failed (soldout)",
+      "status": "failed",
+      "etg_status": "soldout",
+      "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout",
+      "etg_order_id": 100090343,
+      "failure_reason": "The room sold out at the hotel before it could be confirmed"
+    }
+  ],
+  "exchanges": [
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/prebook/",
+      "request": {
+        "hash": "h-7e122ab6-0446-473a-bba1-e7c72484f3c2",
+        "price_increase_percent": 10
+      },
+      "response": {
+        "data": {
+          "hotels": [
+            {
+              "id": "conrad_los_angeles",
+              "hid": 10004834,
+              "rates": [
+                {
+                  "book_hash": "p-7e122ab6-0446-473a-bba1-e7c72484f3c2",
+                  "match_hash": "m-5d59b35c-d481-5b30-b9cd-c09b5e1cca06",
+                  "daily_prices": [
+                    "179.00",
+                    "179.00"
+                  ],
+                  "meal": "breakfast",
+                  "meal_data": {
+                    "value": "breakfast",
+                    "has_breakfast": true,
+                    "no_child_meal": false
+                  },
+                  "payment_options": {
+                    "payment_types": [
+                      {
+                        "amount": "358.00",
+                        "show_amount": "358.00",
+                        "currency_code": "USD",
+                        "show_currency_code": "USD",
+                        "by": null,
+                        "is_need_credit_card_data": false,
+                        "is_need_cvc": false,
+                        "type": "deposit",
+                        "vat_data": {
+                          "included": true,
+                          "applied": true,
+                          "amount": "35.80",
+                          "currency_code": "USD",
+                          "value": "35.80"
+                        },
+                        "tax_data": {
+                          "taxes": [
+                            {
+                              "name": "city_tax",
+                              "included_by_supplier": false,
+                              "amount": "17.90",
+                              "currency_code": "USD"
+                            },
+                            {
+                              "name": "occupancy_tax",
+                              "included_by_supplier": false,
+                              "amount": "14.32",
+                              "currency_code": "USD"
+                            },
+                            {
+                              "name": "resort_fee",
+                              "included_by_supplier": true,
+                              "amount": "7.16",
+                              "currency_code": "USD"
+                            },
+                            {
+                              "name": "service_fee",
+                              "included_by_supplier": true,
+                              "amount": "35.80",
+                              "currency_code": "USD"
+                            }
+                          ]
+                        },
+                        "perks": {},
+                        "commission_info": {
+                          "show": {
+                            "amount_gross": "358.00",
+                            "amount_net": "358.00",
+                            "amount_commission": "0.00"
+                          },
+                          "charge": {
+                            "amount_gross": "358.00",
+                            "amount_net": "358.00",
+                            "amount_commission": "0.00"
+                          }
+                        },
+                        "cancellation_penalties": {
+                          "policies": [
+                            {
+                              "start_at": null,
+                              "end_at": "2026-11-23T00:00:00",
+                              "amount_charge": "0.00",
+                              "amount_show": "0.00",
+                              "commission_info": {
+                                "show": {
+                                  "amount_gross": "0.00",
+                                  "amount_net": "0.00",
+                                  "amount_commission": "0.00"
+                                },
+                                "charge": {
+                                  "amount_gross": "0.00",
+                                  "amount_net": "0.00",
+                                  "amount_commission": "0.00"
+                                }
+                              }
+                            },
+                            {
+                              "start_at": "2026-11-23T00:00:00",
+                              "end_at": null,
+                              "amount_charge": "358.00",
+                              "amount_show": "358.00",
+                              "commission_info": {
+                                "show": {
+                                  "amount_gross": "397.78",
+                                  "amount_net": "358.00",
+                                  "amount_commission": "39.78"
+                                },
+                                "charge": {
+                                  "amount_gross": "397.78",
+                                  "amount_net": "358.00",
+                                  "amount_commission": "39.78"
+                                }
+                              }
+                            }
+                          ],
+                          "free_cancellation_before": "2026-11-23T00:00:00"
+                        },
+                        "recommended_price": null
+                      }
+                    ]
+                  },
+                  "bar_rate_price_data": null,
+                  "rg_ext": {
+                    "class": 3,
+                    "quality": 2,
+                    "sex": 0,
+                    "bathroom": 2,
+                    "bedding": 3,
+                    "family": 0,
+                    "capacity": 2,
+                    "club": 0,
+                    "bedrooms": 0,
+                    "balcony": 0,
+                    "view": 0,
+                    "floor": 1
+                  },
+                  "room_name": "Standard Double room (full double bed)",
+                  "room_name_info": null,
+                  "serp_filters": [
+                    "has_breakfast",
+                    "has_bathroom"
+                  ],
+                  "sell_price_limits": null,
+                  "allotment": 2,
+                  "amenities_data": [
+                    "non-smoking",
+                    "desk",
+                    "tv",
+                    "wi-fi",
+                    "towels"
+                  ],
+                  "any_residency": true,
+                  "deposit": null,
+                  "no_show": {
+                    "amount": "0.00",
+                    "currency_code": "USD",
+                    "from_time": "00:00:00"
+                  },
+                  "room_data_trans": {
+                    "main_room_type": "Standard Double room",
+                    "main_name": "Standard Double room",
+                    "bathroom": null,
+                    "bedding_type": "full double bed",
+                    "misc_room_type": null,
+                    "beds": []
+                  },
+                  "legal_info": null,
+                  "is_package": false
+                }
+              ],
+              "bar_price_data": null
+            }
+          ],
+          "total_hotels": 1,
+          "changes": {
+            "price_changed": false
+          }
+        },
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/prebook",
+            "is_active": true,
+            "is_limited": true,
+            "remaining": 29,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "hash": "h-7e122ab6-0446-473a-bba1-e7c72484f3c2",
+            "price_increase_percent": 10
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "647ab3074c3472c68b0dfef0b2997b7d",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:00.140337"
+        },
+        "status": "ok",
+        "error": null
+      },
+      "httpStatus": 200,
+      "durationMs": 524,
+      "at": "2026-10-20T21:23:58.509Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/form/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout",
+        "book_hash": "p-7e122ab6-0446-473a-bba1-e7c72484f3c2",
+        "language": "en",
+        "user_ip": "127.0.0.1"
+      },
+      "response": {
+        "data": {
+          "order_id": 100090343,
+          "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout",
+          "item_id": 100090343,
+          "payment_types": [
+            {
+              "amount": "358.00",
+              "currency_code": "USD",
+              "is_need_credit_card_data": false,
+              "is_need_cvc": false,
+              "type": "deposit",
+              "recommended_price": null
+            }
+          ],
+          "is_gender_specification_required": false,
+          "upsell_data": []
+        },
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/form",
+            "is_active": true,
+            "is_limited": true,
+            "remaining": 29,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout",
+            "book_hash": "p-7e122ab6-0446-473a-bba1-e7c72484f3c2",
+            "language": "en",
+            "user_ip": "127.0.0.1"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "10465c6fed30dec6fa4ec3deef770220",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:00.750814"
+        },
+        "status": "ok",
+        "error": null
+      },
+      "httpStatus": 200,
+      "durationMs": 779,
+      "at": "2026-10-20T21:23:59.093Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/",
+      "request": {
+        "user": {
+          "email": "noreply@holidaywaka.com",
+          "phone": "+2348050743775",
+          "comment": "ETG certification: Failed with soldout after unknown error"
+        },
+        "supplier_data": {
+          "first_name_original": "John",
+          "last_name_original": "Smith",
+          "phone": "+2348050743775",
+          "email": "noreply@holidaywaka.com"
+        },
+        "partner": {
+          "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout",
+          "comment": "HW-SU3GRXAV"
+        },
+        "language": "en",
+        "rooms": [
+          {
+            "guests": [
+              {
+                "first_name": "John",
+                "last_name": "Smith"
+              },
+              {
+                "first_name": "Mary",
+                "last_name": "Smith"
+              }
+            ]
+          }
+        ],
+        "payment_type": {
+          "type": "deposit",
+          "amount": "358.00",
+          "currency_code": "USD"
+        }
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish",
+            "is_active": true,
+            "is_limited": true,
+            "remaining": 29,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "user": {
+              "email": "noreply@holidaywaka.com",
+              "phone": "+2348050743775",
+              "comment": "ETG certification: Failed with soldout after unknown error"
+            },
+            "supplier_data": {
+              "first_name_original": "John",
+              "last_name_original": "Smith",
+              "phone": "+2348050743775",
+              "email": "noreply@holidaywaka.com"
+            },
+            "partner": {
+              "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout",
+              "comment": "HW-SU3GRXAV"
+            },
+            "language": "en",
+            "rooms": [
+              {
+                "guests": [
+                  {
+                    "first_name": "John",
+                    "last_name": "Smith"
+                  },
+                  {
+                    "first_name": "Mary",
+                    "last_name": "Smith"
+                  }
+                ]
+              }
+            ],
+            "payment_type": {
+              "type": "deposit",
+              "amount": "358.00",
+              "currency_code": "USD"
+            }
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "b66bd5d8ddfd949c158d68d6f5c2d89e",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:01.509382"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 1023,
+      "at": "2026-10-20T21:23:59.882Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "ef743c579b6d5b7608bf8f589e795051",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:02.640547"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 699,
+      "at": "2026-10-20T21:24:00.913Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "7391210179896486f7c4d8a5c279f0d5",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:05.287588"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 560,
+      "at": "2026-10-20T21:24:03.630Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "791db81b81f00d10755ede2b2578bcab",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:08.023807"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 751,
+      "at": "2026-10-20T21:24:06.204Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "c7c5319a5ed57f5fc80a544c623db5b5",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:10.605174"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 493,
+      "at": "2026-10-20T21:24:08.974Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "4872c18362ffabbe3d66d77df0772261",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:13.147985"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 594,
+      "at": "2026-10-20T21:24:11.483Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "8ec1d4fcb66ac973f61dd4e794521628",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:15.738841"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 1015,
+      "at": "2026-10-20T21:24:14.088Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "1e6be9317b135ea460b25fc823383872",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:18.749425"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 583,
+      "at": "2026-10-20T21:24:17.125Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "7d39f40f742189604799b3790ad84ba9",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:21.349385"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 443,
+      "at": "2026-10-20T21:24:19.724Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "a7718c66184b5dfd9b38a9d1f91ee290",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:23.814640"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 485,
+      "at": "2026-10-20T21:24:22.189Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "41805e97b8c2afe01d660ef612ecd27c",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:26.310101"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 480,
+      "at": "2026-10-20T21:24:24.689Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "87b1d2bd3c23121af47b5803193bbbd0",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:28.829364"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 505,
+      "at": "2026-10-20T21:24:27.199Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/info/",
+      "request": {
+        "ordering": {
+          "ordering_type": "desc",
+          "ordering_by": "created_at"
+        },
+        "pagination": {
+          "page_size": 1,
+          "page_number": 1
+        },
+        "search": {
+          "partner_order_ids": [
+            "d79b693f-9e0a-45a7-bf9e-e52bdd814034"
+          ]
+        },
+        "language": "en"
+      },
+      "response": {
+        "data": {
+          "current_page_number": 1,
+          "total_orders": 6,
+          "total_pages": 6,
+          "found_orders": 1,
+          "found_pages": 1,
+          "orders": [
+            {
+              "agreement_number": "B2B-36734",
+              "amount_payable": {
+                "amount": "0.00",
+                "currency_code": "USD"
+              },
+              "amount_payable_vat": {
+                "amount": "0.00",
+                "currency_code": "USD"
+              },
+              "amount_refunded": {
+                "amount": "275.00",
+                "currency_code": "USD"
+              },
+              "amount_sell": {
+                "amount": "275.00",
+                "currency_code": "USD"
+              },
+              "amount_sell_b2b2c": {
+                "amount": "0.00",
+                "currency_code": "USD"
+              },
+              "api_auth_key_id": 1163,
+              "cancelled_at": "2026-10-20T21:22:46",
+              "checkin_at": "2026-11-24",
+              "checkout_at": "2026-11-26",
+              "contract_slug": "241876.b2b.f924",
+              "created_at": "2026-10-20T21:20:57",
+              "hotel_data": {
+                "id": "rosa_bell_motel_los_angeles",
+                "hid": 8819557,
+                "order_id": null
+              },
+              "is_cancellable": false,
+              "modified_at": "2026-10-20T21:22:30",
+              "nights": 2,
+              "order_id": 100090337,
+              "order_type": "hotel",
+              "roomnights": 2,
+              "rooms_data": [
+                {
+                  "bedding_name": [
+                    "nobedding"
+                  ],
+                  "guest_data": {
+                    "adults_number": 2,
+                    "children_number": 0,
+                    "guests": [
+                      {
+                        "first_name": "John",
+                        "first_name_original": null,
+                        "last_name": "Smith",
+                        "last_name_original": null,
+                        "is_child": false,
+                        "age": null,
+                        "id": 1
+                      },
+                      {
+                        "first_name": "Mary",
+                        "first_name_original": null,
+                        "last_name": "Smith",
+                        "last_name_original": null,
+                        "is_child": false,
+                        "age": null,
+                        "id": 2
+                      }
+                    ]
+                  },
+                  "meal_name": "breakfast",
+                  "has_breakfast": false,
+                  "no_child_meal": false,
+                  "room_idx": 0,
+                  "room_name": "Standard Double room"
+                }
+              ],
+              "source": "b2b-api",
+              "status": "cancelled",
+              "supplier_data": {
+                "confirmation_id": null,
+                "name": null,
+                "order_id": "e08c9710-fe09-4fba-90ca-330bd2e00423"
+              },
+              "taxes": [],
+              "total_vat": {
+                "amount": "0.00",
+                "currency_code": "USD",
+                "included": false
+              },
+              "is_package": false,
+              "partner_data": {
+                "order_comment": null,
+                "order_id": "d79b693f-9e0a-45a7-bf9e-e52bdd814034"
+              },
+              "amount_payable_with_upsells": {
+                "amount": "0.00",
+                "currency_code": "USD"
+              },
+              "cancellation_info": {
+                "free_cancellation_before": "2026-11-23T00:00:00",
+                "policies": [
+                  {
+                    "end_at": "2026-11-23T00:00:00",
+                    "penalty": {
+                      "amount": "0.00",
+                      "currency_code": "USD",
+                      "amount_info": null
+                    },
+                    "start_at": null
+                  },
+                  {
+                    "end_at": null,
+                    "penalty": {
+                      "amount": "275.00",
+                      "currency_code": "USD",
+                      "amount_info": null
+                    },
+                    "start_at": "2026-11-23T00:00:00"
+                  }
+                ]
+              },
+              "invoice_id": null,
+              "is_checked": false,
+              "meta_data": {
+                "voucher_order_comment": null
+              },
+              "payment_data": {
+                "payment_type": "deposit",
+                "invoice_id": null,
+                "invoice_id_v2": null,
+                "paid_at": null,
+                "payment_by": null,
+                "payment_due": "2026-11-23",
+                "payment_pending": "2026-11-18"
+              },
+              "upsells": [],
+              "has_tickets": false,
+              "user_data": {
+                "email": "noreply@holidaywaka.com",
+                "arrival_datetime": null,
+                "user_comment": null
+              },
+              "amount_sell_b2b2c_commission": null
+            }
+          ]
+        },
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/info",
+            "is_active": true,
+            "is_limited": true,
+            "remaining": 29,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "ordering": {
+              "ordering_type": "desc",
+              "ordering_by": "created_at"
+            },
+            "pagination": {
+              "page_size": 1,
+              "page_number": 1
+            },
+            "search": {
+              "partner_order_ids": [
+                "d79b693f-9e0a-45a7-bf9e-e52bdd814034"
+              ]
+            },
+            "language": "en"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "8da672b154ab9d18b17189b776ee9e39",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:30.628714"
+        },
+        "status": "ok",
+        "error": null
+      },
+      "httpStatus": 200,
+      "durationMs": 607,
+      "at": "2026-10-20T21:24:28.911Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "ef4afcbca0db73f5c43b0c404beb6732",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:31.387341"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 488,
+      "at": "2026-10-20T21:24:29.728Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "2d21a025d44aec356d3887e561e14ae0",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:33.919105"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 597,
+      "at": "2026-10-20T21:24:32.237Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "82e658d1086df46a71b7f3bfdfcd66f5",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:36.493082"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 567,
+      "at": "2026-10-20T21:24:34.855Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "21515560dee27ad6321e0b8efc9c5288",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:39.102348"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 745,
+      "at": "2026-10-20T21:24:37.444Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "3cd8afd265db03d0d01021bc59ab0086",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:41.852936"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 1065,
+      "at": "2026-10-20T21:24:40.201Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "e297dba7636a1c471d25bd4600f972f0",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:45.134009"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 1038,
+      "at": "2026-10-20T21:24:43.291Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "276e8a6d082c0f614fd3bb60b83afbc8",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:47.995275"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 1371,
+      "at": "2026-10-20T21:24:46.348Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "5db8872d9a87d05e1db8bbd2caa051ee",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:51.391417"
+        },
+        "status": "error",
+        "error": "unknown"
+      },
+      "httpStatus": 500,
+      "durationMs": 835,
+      "at": "2026-10-20T21:24:49.740Z"
+    },
+    {
+      "method": "POST",
+      "endpoint": "b2b/v3/hotel/order/booking/finish/status/",
+      "request": {
+        "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+      },
+      "response": {
+        "data": null,
+        "debug": {
+          "api_endpoint": {
+            "endpoint": "api/b2b/v3/hotel/order/booking/finish/status",
+            "is_active": true,
+            "is_limited": false,
+            "remaining": 30,
+            "requests_number": 30,
+            "reset": "2026-10-20T21:25:00",
+            "seconds_number": 60
+          },
+          "request": {
+            "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+          },
+          "method": "POST",
+          "real_ip": "105.115.5.98",
+          "request_id": "0dac0df301eef440090e8605269fa933",
+          "key_id": 1163,
+          "api_key_id": 1163,
+          "utcnow": "2026-10-20T21:24:54.213172"
+        },
+        "status": "error",
+        "error": "soldout"
+      },
+      "httpStatus": 200,
+      "durationMs": 560,
+      "at": "2026-10-20T21:24:52.589Z"
+    }
+  ],
+  "outcome": {
+    "status": "failed",
+    "etg_status": "soldout",
+    "partner_order_id": "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout",
+    "partner_order_ids": [
+      "31e75376-5fb6-44a7-817e-b5f854b0ea58-unknown_soldout"
+    ],
+    "etg_order_id": 100090343,
+    "price_changed": false,
+    "booking_reference": "HW-SU3GRXAV",
+    "guests_sent": [
+      {
+        "guests": [
+          {
+            "first_name": "John",
+            "last_name": "Smith",
+            "is_child": false
+          },
+          {
+            "first_name": "Mary",
+            "last_name": "Smith",
+            "is_child": false
+          }
+        ]
+      }
+    ]
+  },
+  "expected": {
+    "status": "failed",
+    "etgStatus": "soldout"
+  },
+  "passed": true,
+  "finished_at": "2026-10-20T21:24:53.175Z"
+}

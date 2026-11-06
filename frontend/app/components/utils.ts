@@ -482,7 +482,7 @@ export const SideLinks = [
 ]
 
 export const HeaderLinks = [
-    { title: `Hotels`, url: `/hotels`, show: true },
+    { title: `Hotels`, url: `/hotels`, show: false },
     { title: `Transfers`, url: `/transfers`, show: true },
     { title: `Holiday packages`, url: `/packages`, show: true },
     { title: `Visa`, url: `/visa`, show: true },

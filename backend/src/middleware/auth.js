@@ -1,5 +1,6 @@
 import dotenv from "dotenv"
 import jwt from "jsonwebtoken"
+import { parse as parseCookies } from "cookie"
 import { ServerError, JsonResponse, USER_TYPES } from "../config/utilities.js"
 import db from "../database/index.js"
 import { getCache, setCache } from "../config/cacheConfig.js"
@@ -7,6 +8,16 @@ import { getCache, setCache } from "../config/cacheConfig.js"
 dotenv.config();
 
 export const cookieName = "access_token"
+
+/** The session token from the Cookie header. Parsed properly: the browser sends every cookie for the domain
+ * (analytics, Cloudflare...), so taking "everything after access_token=" swallowed the cookies after it */
+const readSessionToken = (req) => {
+    const value = req.headers.cookie ? parseCookies(req.headers.cookie)[cookieName] : undefined
+    return value && value !== "undefined" ? value : null
+}
+
+/** A tampered, malformed or expired token is a sign-in problem (401, the client sends the admin to login), not a server error */
+const isTokenError = (error) => error instanceof jwt.JsonWebTokenError
 
 export const UrlMiddleware = (req, res, next) => {
     try {
@@ -55,8 +66,8 @@ export const includeAdminMiddleware = async (req, res, next) => {
 
 export const sharedMiddleware = (req, res, next) => {
     try {
-        const tokenHeader = req.headers.cookie;
-        if (tokenHeader) {
+        // Only the session cookie marks an admin; any other cookie (analytics...) used to as well
+        if (readSessionToken(req)) {
             req.role = USER_TYPES.admin
         } else {
             req.role = USER_TYPES.user
@@ -69,20 +80,15 @@ export const sharedMiddleware = (req, res, next) => {
 
 export const authenticate = async (req, res, next) => {
     try {
-        const tokenHeader = req.headers.cookie;
-        if(!tokenHeader) return JsonResponse(res, 403, {message: 'Access forbidden'});
-
-        const token = tokenHeader.split(`${cookieName}=`)[1]
-        if (token === "undefined") return JsonResponse(res, 404, { message: 'No active session found' })
-        if (!token) return JsonResponse(res, 404, { message: 'Access Denied' })
+        const token = readSessionToken(req)
+        if (!token) return JsonResponse(res, 401, { message: 'No active session found' })
         const verify = jwt.verify(token, process.env.JWT_SECRET)
-        if (!verify) return JsonResponse(res, 404, { message: 'Unauthorized access' })
         const user = await db.Users.findOne({ where: { id: verify.id } })
-        if (!user) return JsonResponse(res, 404, { message: `Unauthenticated Access` })
+        if (!user) return JsonResponse(res, 401, { message: `Unauthenticated Access` })
         req.user = user.dataValues
         next()
     } catch (error) {
-        console.log(error, 'authenticate')
+        if (isTokenError(error)) return JsonResponse(res, 401, { message: 'Your session has expired, please log in again' })
         ServerError(res, error)
     }
 }
@@ -98,17 +104,13 @@ export const authorized = (roles) => (req, res, next) => {
 
 export const AuthMiddleware = (req, res, next) => {
     try {
-        const tokenHeader = req.headers.cookie;
-        if(!tokenHeader) return JsonResponse(res, 403, {message: 'Access forbidden'});
-
-        const token = tokenHeader.split(`${cookieName}=`)[1]
-        if (token === "undefined") return res.status(404).json({ message: 'No active session found' })
-        if (!token) return res.status(404).json({ message: 'Access Denied' })
+        const token = readSessionToken(req)
+        if (!token) return JsonResponse(res, 401, { message: 'No active session found' })
         const verify = jwt.verify(token, process.env.JWT_SECRET)
-        if (!verify) return console.log('Unauthorized access')
         req.user = verify.id
         next()
     } catch (error) {
+        if (isTokenError(error)) return JsonResponse(res, 401, { message: 'Your session has expired, please log in again' })
         ServerError(res, error)
     }
 }

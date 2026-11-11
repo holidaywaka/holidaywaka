@@ -1,5 +1,5 @@
 import { USER_TYPES } from '../../../config/utilities.js'
-import { CreateNewTrips, UpdateTripInfo, DeleteTripMedia, DeleteTrip, GetAllTrips, GetSingleTrip, SaveTripEnquiries, GetAllTripEnquiries, UpdateEnquiryStatus, UpdateEnquiryTransaction, GetAllPackagesDestinations, AdminGetAllTrips, GetSingleTripForPayment, QuoteTrip} from '../controller/trips.controller.js'
+import { CreateNewTrips, UpdateTripInfo, UploadTripImages, DeleteTripMedia, DeleteTrip, GetAllTrips, GetSingleTrip, SaveTripEnquiries, GetAllTripEnquiries, UpdateEnquiryStatus, UpdateEnquiryTransaction, GetAllPackagesDestinations, AdminGetAllTrips, GetSingleTripForPayment, QuoteTrip} from '../controller/trips.controller.js'
 import { sharedMiddleware, authenticate, authorized, includeAdminMiddleware } from '../../../middleware/auth.js'
 import { tripValidate, tripEnquiryValidate, enuqiryStatusValidate, enuqiryTransactionStatusValidate, validateDeleteTripMdedia, validateSingleTrip, UpdatetripValidate } from '../validator/trips.validator.js'
 import { IdParamsValidator } from '../../../validators/common.validator.js'
@@ -21,6 +21,7 @@ route.use(authorized(USER_TYPES.admin))
 route.get("/all", AdminGetAllTrips)
 route.post("/create", tripValidate(), CreateNewTrips)
 route.put("/update/:id", UpdatetripValidate(), IdParamsValidator(), UpdateTripInfo)
+route.post("/images/:id", IdParamsValidator(), UploadTripImages)
 route.post("/delete-media/:id", validateDeleteTripMdedia(), DeleteTripMedia)
 route.delete("/delete/:id", IdParamsValidator(), DeleteTrip)
 

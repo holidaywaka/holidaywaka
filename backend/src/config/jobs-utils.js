@@ -14,6 +14,7 @@ export const JOB_FILES = {
   hash_password: "hash-password.js",
   notify: "notifyJob.js",
   email: "emailJobs.js",
+  trip_images: "tripImagesJob.js",
 }
 
 // bree.init() replaces config.jobs, so concurrent first calls to add() lose their jobs; init exactly once

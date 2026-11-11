@@ -1,7 +1,10 @@
 import { Op } from 'sequelize'
-import { UploadImage, DeleteImage, uploadMultipleImages } from '../../../config/cloudinaryConfig.js'
+import { DeleteImage } from '../../../config/cloudinaryConfig.js'
 import { ServerError, PageOffset, ServerPagination, generateReference, JsonResponse, USER_TYPES, ServerTransactionStatusOptions, TransactionTypes, NairaRate, ServerNaira, VoucherStatusOptions, IsNaira, roundDecimal, roundUpAmount, ServerSlugify, MainStatusOptions, CalculateVoucherDiscounts, ServerTransactionPaymentType, MarkupOptions, displayMarkupPercent } from '../../../config/utilities.js'
 import path from 'path'
+import os from 'os'
+import fs from 'fs/promises'
+import crypto from 'crypto'
 import dayjs from "dayjs"
 
 import SendMail from '../../../emails/emailConfig.js'
@@ -16,34 +19,29 @@ import { reserveVoucher } from '../../vouchers/services/voucher.service.js'
 import { assertVisaLeadTime, earliestTravelDate, quotePackage } from '../services/package-pricing.js'
 // https://dev.holidaywaka.com/verify-payment?trxId=24571565&status=APPROVED&approved=True
 
+/** Saves the package details only (JSON). Images go to UploadTripImages with the returned id, so a slow or
+ * failed image upload never costs the admin the details they typed */
 export const CreateNewTrips = async (req, res) => {
     try {
-        const getimages = req?.files?.images
-        // if (!getimages) return JsonResponse(res, 404, { message: `Upload a minimum of one image` })
-
-
-        // save trip images
-        const images = []
-        if (getimages) {
-            const imagesResponse = await uploadMultipleImages(req.files?.images)
-            imagesResponse.map(ele => {
-                return images.push(ele)
-            })
-        }
-
         const slug = ServerSlugify(req.body.title)
         const newTrip = await db.Trips.create({
-            ...req.body,
+            title: req.body.title,
+            summary: req.body.summary,
+            tripType: req.body.tripType,
+            description: req.body.description,
+            startDate: req.body.startDate,
+            endDate: req.body.endDate,
+            destinations: req.body.destinations,
+            itineraries: req.body.itineraries,
+            inclusions: req.body.inclusions,
+            prices: req.body.prices,
             visaRequired: Boolean(req.body.visaRequired),
             visaProcessingDays: req.body.visaRequired ? Math.max(0, parseInt(req.body.visaProcessingDays, 10) || 0) : 0,
             status: MainStatusOptions.true,
+            images: [],
             slug,
         })
 
-
-        await newTrip.update({
-            images: images
-        })
         await db.Notifies.create({
             userId: req.user.id,
             title: 'New Package Trip',
@@ -63,23 +61,58 @@ export const CreateNewTrips = async (req, res) => {
     }
 }
 
+const TRIP_IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp']
+const TRIP_IMAGE_MAX_BYTES = 10 * 1024 * 1024
+const TRIP_IMAGE_TEMP_DIR = path.join(os.tmpdir(), 'holidaywaka-trip-images')
+
+/**
+ * Accepts one or more images ("images" field) for an existing package and hands them to a background job.
+ * The job uploads them one after another and ADDS each to the package's images; nothing is replaced.
+ * Responds 202 as soon as the files are received.
+ */
+export const UploadTripImages = async (req, res) => {
+    try {
+        const trip = await db.Trips.findOne({ where: { id: req.params.id }, attributes: ['id'] })
+        if (!trip) throw new CustomError(404, 'Trip not found')
+
+        const received = req.files?.images
+        if (!received) throw new CustomError(400, 'Select at least one image to upload')
+        const images = Array.isArray(received) ? received : [received]
+
+        // Check every file before queuing any
+        for (const image of images) {
+            const extension = path.extname(image.name).toLowerCase()
+            if (!TRIP_IMAGE_EXTENSIONS.includes(extension)) throw new CustomError(400, `${image.name}: ${extension || 'this'} file type is not allowed`)
+            if (image.truncated || image.size > TRIP_IMAGE_MAX_BYTES) throw new CustomError(400, `${image.name} is larger than 10MB`)
+        }
+
+        // Job workers run in their own thread; hand them temp files rather than cloning the buffers
+        await fs.mkdir(TRIP_IMAGE_TEMP_DIR, { recursive: true })
+        const files = []
+        for (const image of images) {
+            const filePath = path.join(TRIP_IMAGE_TEMP_DIR, `${trip.id}-${crypto.randomUUID()}${path.extname(image.name).toLowerCase()}`)
+            await fs.writeFile(filePath, image.data)
+            files.push({ path: filePath, name: image.name, mimetype: image.mimetype })
+        }
+
+        runJobs(`trip-images-${trip.id}`, JOB_FILES.trip_images, { tripId: trip.id, userId: req.user.id, files })
+
+        return JsonResponse(res, 202, {
+            message: images.length === 1 ? 'Image received, uploading in the background' : `${images.length} images received, uploading in the background`,
+            data: { id: trip.id, queued: images.length }
+        })
+    } catch (error) {
+        ServerError(res, error)
+    }
+}
+
 export const UpdateTripInfo = async (req, res) => {
     try {
         const item = await db.Trips.findOne({ where: { id: req.params.id } })
         if (!item) return JsonResponse(res, 404, { message: 'Trip not found' })
 
-        // if new images are added. Copy first: pushing into the getter's array mutates the value Sequelize
-        // compares against, so the change goes undetected and the new uploads are never saved
-        const allNormalImages = [...(item.images ?? [])]
-        if (req?.files?.images) {
-
-            const imagesResponse = await uploadMultipleImages(req.files?.images)
-            imagesResponse.map(ele => {
-                return allNormalImages.push(ele)
-            })
-        }
-
-
+        // Images are not touched here: new ones are added through UploadTripImages (background job) and
+        // removed only through DeleteTripMedia. Writing the list here could undo an upload finishing meanwhile
         await item.update({
             status: req.body?.status || item.status,
             title: req.body?.title || item.title,
@@ -95,7 +128,6 @@ export const UpdateTripInfo = async (req, res) => {
             visaRequired: req.body?.visaRequired !== undefined ? Boolean(req.body.visaRequired) : item.visaRequired,
             visaProcessingDays: req.body?.visaProcessingDays !== undefined ? Math.max(0, parseInt(req.body.visaProcessingDays, 10) || 0) : item.visaProcessingDays,
             slug: req.body?.title ? ServerSlugify(req.body.title) : item.slug,
-            images: allNormalImages
         });
 
 
@@ -116,20 +148,16 @@ export const UpdateTripInfo = async (req, res) => {
 
 export const DeleteTripMedia = async (req, res) => {
     try {
-        const trip = await db.Trips.findOne({
-            where: { id: req.params.id }
+        // Row lock: a background upload job may be appending to the same list right now
+        const trip = await db.sequelize.transaction(async (transaction) => {
+            const found = await db.Trips.findOne({ where: { id: req.params.id }, transaction, lock: transaction.LOCK.UPDATE })
+            if (!found) throw new CustomError(404, 'Trip not found')
+            const images = found.images ?? []
+            if (!images.includes(req.body.url)) throw new CustomError(404, 'Requested image not found')
+            await found.update({ images: images.filter(ele => ele !== req.body.url) }, { transaction })
+            return found
         })
-        if (!trip) return JsonResponse(res, 404, { message: `Trip not found` })
-
-        const imageJson = trip.images
-        const getImage = imageJson.find(ele => ele === req.body.url)
-        if (!getImage) return JsonResponse(res, 404, { message: 'Requested image not found' })
-
-        const result = await DeleteImage(getImage)
-        const filterImage = imageJson.filter(ele => ele !== req.body.url)
-        await trip.update({
-            images: filterImage
-        })
+        await DeleteImage(req.body.url)
 
         await db.Notifies.create({
             userId: req.user.id,
@@ -296,7 +324,7 @@ export const DeleteTrip = async (req, res) => {
 
         const images = item.images
         if (Number(images?.length) > 0) {
-            await Promise.all(images.map(img => DeleteImage(img.file)));
+            await Promise.all(images.map(img => DeleteImage(img)));
         }
 
         // 4. Audit/Notification
@@ -308,6 +336,8 @@ export const DeleteTrip = async (req, res) => {
 
         await item.destroy();
 
+        deleteCache(cacheKeys.trips)
+        deleteCache(cacheKeys.trip_filters)
         return JsonResponse(res, 200, { message: 'Trip successfully deleted' });
 
     } catch (error) {

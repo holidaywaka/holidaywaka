@@ -3,28 +3,23 @@ import { body, param, validationResult } from 'express-validator'
 import { ValidatorError, validateDateFormat, ServerTransactionStatusOptions, safeParse } from '../../../config/utilities.js'
 import CustomError from '../../../middleware/custom-error.js';
 
+/** Package details arrive as a JSON body; older clients sent multipart with the JSON in a "data" field */
+const parseTripBody = (req, res, next) => {
+    try {
+        if (typeof req.body?.data === 'string') req.body = safeParse(req.body.data)
+        if (!req.body || typeof req.body !== 'object' || Array.isArray(req.body)) throw new Error('Invalid body')
+        next()
+    } catch (error) {
+        next(new CustomError(400, "Invalid JSON data provided"))
+    }
+}
+
 export const UpdatetripValidate = () => [
-    (req, res, next) => {
-        try {
-            const fields = req.body.data;
-            req.body = safeParse(fields)
-            next()
-        } catch (error) {
-            next(new CustomError(400, "Invalid JSON data provided"))
-        }
-    },
+    parseTripBody,
 ]
 
 export const tripValidate = () => [
-    (req, res, next) => {
-        try {
-            const fields = req.body.data;
-            req.body = safeParse(fields)
-            next()
-        } catch (error) {
-            next(new CustomError(400, "Invalid JSON data provided"))
-        }
-    },
+    parseTripBody,
     body("destinations")
         .isArray({ min: 1 }).withMessage("At least one destination is required"),
     body("title")

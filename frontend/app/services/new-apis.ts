@@ -125,6 +125,7 @@ export const NewApis = {
         destinations: "trips/destinations/all",
         create: "trips/create",
         update: "trips/update",
+        images: "trips/images",
         delete_media: "trips/delete-media",
         delete: "trips/delete",
         all_enquiry: "trips/enquiry-all",

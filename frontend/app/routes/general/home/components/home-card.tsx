@@ -20,10 +20,12 @@ type props = {
 
 export default function HomeCard(props: props) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const service = searchParams.get('service') ?? listings[0].title;
 
   const hostname = window.location.hostname;
   const isProd = hostname === "holidaywaka.com" || hostname === "www.holidaywaka.com";
+  // Hotels are not live on production yet: the tabs are hidden there and the search is always transfers,
+  // even if a ?service=hotels link is shared
+  const service = isProd ? 'transfers' : (searchParams.get('service') ?? listings[0].title);
 
   function handleActive(title: string) {
     const search = new URLSearchParams(searchParams);

@@ -6,6 +6,7 @@ import React from 'react'
 import { useNavigate } from 'react-router'
 import Editor from '~/components/admin/Editor'
 import FileUploader, { type imageProps } from '~/components/admin/FileUploader'
+import { ApiCountries } from '~/components/general/ApiCountries'
 import Formbutton from '~/components/general/Formbutton'
 import NewForminput from '~/components/general/NewForminput'
 import { TripTypeOptions } from '~/components/utils'
@@ -22,6 +23,13 @@ function earliestTravel(days: number) {
     if (date.day() !== 0 && date.day() !== 6) added++
   }
   return date.add(1, 'day').format('ddd, D MMM YYYY')
+}
+
+const CountryOptions = [...new Set(ApiCountries.map(country => country.name))].sort((a, b) => a.localeCompare(b))
+
+/** Packages saved before the country picker may hold a free-text country; keep it selectable so editing doesn't blank it */
+function countryOptions(current?: string) {
+  return current && !CountryOptions.includes(current) ? [current, ...CountryOptions] : CountryOptions
 }
 
 /** List rows are keyed by id; length + 1 repeats an existing id once a middle row is removed */
@@ -91,10 +99,14 @@ export default function TripForm(props: props) {
       images: value => (screen === 6 && value.length < 1) ? 'Image is required' : null
     }
   })
+  // Set once the details are saved, so a retry after a failed image upload updates instead of creating a duplicate
+  const [tripId, setTripId] = React.useState<string | undefined>(props.data?.id ? String(props.data.id) : undefined)
+  const [uploadProgress, setUploadProgress] = React.useState<{ current: number, total: number } | null>(null)
+
   async function removeImage(value: string) {
     try {
       const response = await createResponse({
-        endpoint: `${NewApis.trips.delete_media}/${props.data?.id}`,
+        endpoint: `${NewApis.trips.delete_media}/${tripId}`,
         method: "POST",
         data: { url: value }
       });
@@ -128,20 +140,47 @@ export default function TripForm(props: props) {
         visaProcessingDays: values.visaRequired ? Number(values.visaProcessingDays) : 0,
       }
 
-      const formdata = new FormData()
-      formdata.append("data", JSON.stringify(data))
-      form.values.images.forEach((file) => (file.file) && formdata.append("images", file.file))
+      // 1. Save the details on their own (small JSON request) and keep the id
+      let id = tripId
+      if (id) {
+        await createResponse({ endpoint: `${NewApis.trips.update}/${id}`, data, method: "PUT" })
+      } else {
+        const response = await createResponse({ endpoint: NewApis.trips.create, data, method: "POST" })
+        id = String(response?.data?.id)
+        setTripId(id)
+      }
 
-      const isEdit = props.data?.id
-      const response = await createResponse({
-        endpoint: isEdit ? `${NewApis.trips.update}/${props.data?.id}` : NewApis.trips.create,
-        data: formdata,
-        method: isEdit ? "PUT" : "POST",
-        type: "FILE"
-      })
-      getAlert(response.message, 'success')
+      // 2. Send new images one per request. The server queues each for a background upload and ADDS it to
+      //    the package, so one failing image doesn't stop the rest and never touches the saved details
+      const pending = values.images.filter((item) => item.file)
+      const failed: { item: imageProps, reason: string }[] = []
+      for (const [index, item] of pending.entries()) {
+        setUploadProgress({ current: index + 1, total: pending.length })
+        try {
+          const formdata = new FormData()
+          formdata.append("images", item.file as File)
+          await createResponse({ endpoint: `${NewApis.trips.images}/${id}`, data: formdata, method: "POST", type: "FILE" })
+        } catch (error) {
+          failed.push({ item, reason: (error as Error).message })
+        }
+      }
+      setUploadProgress(null)
+
+      if (failed.length) {
+        // Details are saved; keep only the images that didn't go through so the admin can retry or drop them
+        const sentIds = new Set(pending.filter((item) => !failed.some((fail) => fail.item === item)).map((item) => item.id))
+        values.images.forEach((item) => sentIds.has(item.id) && item.img?.startsWith("blob:") && URL.revokeObjectURL(item.img))
+        form.setFieldValue("images", values.images.filter((item) => !sentIds.has(item.id)))
+        setScreen(6)
+        return getAlert(`Package details saved, but ${failed.length} of ${pending.length} image(s) could not be sent (${failed.map((fail) => fail.item.file?.name).join(", ")}): ${failed[0].reason} Submit again to retry them.`, 'error')
+      }
+
+      getAlert(pending.length
+        ? `Package saved. ${pending.length} image(s) are uploading in the background and will appear on the package shortly.`
+        : 'Package saved.', 'success')
       navigate("/admin-portal/packages/all-packages")
     } catch (error) {
+      setUploadProgress(null)
       getAlert((error as Error).message, 'error')
     }
   }
@@ -368,6 +407,9 @@ export default function TripForm(props: props) {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <NewForminput
                           content={`Country`}
+                          formtype='select'
+                          searchable
+                          options={countryOptions(ele.country)}
                           error={form.errors[countryPath]?.toString() || ''}
                           {...form.getInputProps(countryPath)}
                         />
@@ -447,6 +489,11 @@ export default function TripForm(props: props) {
           {screen > 1 ? <Formbutton type="button" title={'Back'} onClick={handleBack} bg='bg-slate-300' /> : <div></div>}
           <Formbutton loading={form.submitting} title={screen < 7 ? 'Continue' : 'Submit'} />
         </div>
+        {uploadProgress && (
+          <div className="text-center text-sm text-zinc-500 -mt-6 mb-10">
+            Package details saved. Sending image {uploadProgress.current} of {uploadProgress.total}…
+          </div>
+        )}
       </form>
     </div>
   )

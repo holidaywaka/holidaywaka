@@ -66,11 +66,19 @@ type SearchInputProps = {
 }
 
 export function SearchInput(props: SearchInputProps) {
+    // Focus without scrolling: autoFocus scrolled the page to the input before the dropdown was positioned,
+    // which made the page jump and the list open in the wrong place
+    const inputRef = React.useRef<HTMLInputElement>(null)
+    React.useEffect(() => {
+        const frame = requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }))
+        return () => cancelAnimationFrame(frame)
+    }, [])
     return (
         <div className="p-2 border-b border-gray-200">
             <div className="flex items-center gap-2 h-10 px-3 rounded-md border border-gray-300 bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/15 transition-all">
                 <FiSearch className="shrink-0 text-zinc-500" />
                 <input
+                    ref={inputRef}
                     type="text"
                     role="combobox"
                     aria-label={props.label}
@@ -81,7 +89,6 @@ export function SearchInput(props: SearchInputProps) {
                     value={props.value}
                     onChange={(e) => props.onChange(e.target.value)}
                     onKeyDown={props.onKeyDown}
-                    autoFocus={true}
                     autoComplete="off"
                     placeholder={props.placeholder}
                     className="w-full min-w-0 text-sm! outline-0 bg-transparent" />
@@ -141,10 +148,17 @@ export function useListNavigation<T>(items: T[], onSelect: (item: T) => void, on
     React.useEffect(() => { setActive(0) }, [items])
 
     React.useEffect(() => {
-        document.getElementById(optionId(active))?.scrollIntoView({ block: 'nearest' })
+        // Scroll only the list: scrollIntoView would also scroll the page (the "page jumps" bug)
+        const option = document.getElementById(optionId(active))
+        const list = option?.closest('[role="listbox"]') as HTMLElement | null
+        if (!option || !list) return
+        const optionBox = option.getBoundingClientRect()
+        const listBox = list.getBoundingClientRect()
+        if (optionBox.top < listBox.top) list.scrollTop -= listBox.top - optionBox.top
+        else if (optionBox.bottom > listBox.bottom) list.scrollTop += optionBox.bottom - listBox.bottom
     }, [active, optionId])
 
-    function onKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    function onKeyDown(event: React.KeyboardEvent<HTMLElement>) {
         if (event.key === 'ArrowDown') {
             event.preventDefault()
             setActive((index) => Math.min(items.length - 1, index + 1))
@@ -154,10 +168,53 @@ export function useListNavigation<T>(items: T[], onSelect: (item: T) => void, on
         } else if (event.key === 'Enter') {
             event.preventDefault()
             if (items[active]) onSelect(items[active])
+        } else if (event.key === 'Home') {
+            event.preventDefault()
+            setActive(0)
+        } else if (event.key === 'End') {
+            event.preventDefault()
+            setActive(Math.max(0, items.length - 1))
         } else if (event.key === 'Escape') {
             onClose()
         }
     }
 
     return { active, setActive, onKeyDown, optionId, activeId: items.length ? optionId(active) : undefined }
+}
+
+/** Room a search dropdown needs under its field (search box + list) */
+const DROPDOWN_SPACE = 440
+
+/**
+ * Before opening a dropdown: if there isn't room for it below the field, scroll the field up to sit just under
+ * the sticky header. Dropdowns then always open downward (no flip into the hero) and are fully visible.
+ */
+export function revealForDropdown(element: HTMLElement | null, needed = DROPDOWN_SPACE) {
+    if (!element || typeof window === 'undefined') return
+    const rect = element.getBoundingClientRect()
+    const headerBottom = Math.max(0, document.querySelector('header')?.getBoundingClientRect().bottom ?? 0)
+    const roomBelow = window.innerHeight - rect.bottom
+    if (rect.top >= headerBottom && roomBelow >= Math.min(needed, window.innerHeight - headerBottom - rect.height)) return
+    window.scrollTo({ top: Math.max(0, window.scrollY + rect.top - headerBottom - 12), behavior: 'instant' as ScrollBehavior })
+}
+
+/** Popover props shared by the search pickers: open below the field, never flip above it */
+export const DROPDOWN_POPOVER = {
+    position: 'bottom-start' as const,
+    middlewares: { flip: false, shift: true },
+    shadow: 'lg' as const,
+    radius: 'md' as const,
+    offset: 6,
+    trapFocus: false,
+}
+
+/** Opens a picker after making room for its dropdown */
+export function useDropdownField() {
+    const ref = React.useRef<HTMLDivElement>(null)
+    const [opened, setOpened] = React.useState(false)
+    const open = React.useCallback(() => {
+        revealForDropdown(ref.current)
+        setOpened(true)
+    }, [])
+    return { ref, opened, setOpened, open }
 }

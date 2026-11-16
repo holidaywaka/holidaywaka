@@ -27,6 +27,7 @@ export default [
                 route("hotel-page", "routes/general/hotel-page/index.tsx"),
                 route("hotel-checkout/:id", "routes/general/hotel-checkout/index.tsx"),
                 route("hotel-booking/:id", "routes/general/hotel-booking/index.tsx"),
+                route("manage-booking", "routes/general/manage-booking.tsx"),
                 ...prefix("packages", [
                     route("", "routes/general/packages/packages.tsx"),
                     route("/:slug/:id", "routes/general/packages/single-package.tsx"),

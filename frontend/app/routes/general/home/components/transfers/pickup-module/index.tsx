@@ -93,6 +93,7 @@ export default function PickupModule(props: componentProps) {
                         onChange={handleDestination}
                         origin={origin?.id}
                         start_country={origin?.country}
+                        suggestFrom={origin ? (origin.airport ? origin.detail.split(' · ')[0] : origin.title) : null}
                         disabledReason={origin ? undefined : 'Choose your pick up location first'}
                         error={errors.destination}
                     />

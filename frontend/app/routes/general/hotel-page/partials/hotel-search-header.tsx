@@ -22,7 +22,7 @@ export default function HotelSearchHeader(props: props) {
             </div>
             <div className="bg-white border border-slate-200/70 flex items-center flex-wrap gap-2 text-sm size-fit py-2 px-3 rounded-lg text-zinc-600">
                 <div className="flex items-center gap-1">
-                    <Linked to="/?service=hotels" className="text-blue-600 flex items-center gap-1"> <Home2 className="size-4 inline -mt-1" /> Main page</Linked>
+                    <Linked to="/" className="text-blue-600 flex items-center gap-1"> <Home2 className="size-4 inline -mt-1" /> Main page</Linked>
                 </div>
                 {region && <>
                     <ArrowRight2 className="size-4" />

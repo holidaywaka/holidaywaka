@@ -15,6 +15,13 @@ export const SiteContact = "+2349166691541"
 export const SiteAddress = "6th Floor, Spacepad Building, opposite Ologolo Bustop. Lekki Peninsula ll, Lagos"
 export const SiteLink = "holidaywaka.com"
 export const SiteEmail = "info@holidaywaka.com"
+
+/** The live site (holidaywaka.com). Services not launched yet (hotels) stay hidden there but work on dev */
+export function isProductionSite() {
+    if (typeof window === "undefined") return false
+    const hostname = window.location.hostname
+    return hostname === "holidaywaka.com" || hostname === "www.holidaywaka.com"
+}
 export const SiteFacebook = "https://www.facebook.com/share/19uEESnpZd/?mibextid=wwXIfr"
 export const ClientNaira = "₦"
 export const MediaType = ['IMAGE', 'VIDEO']

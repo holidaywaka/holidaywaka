@@ -24,8 +24,9 @@ const { paid: PAID, declined: DECLINED, part_paid: PART_PAID, pending: PENDING }
 async function afterPaid(transaction) {
     await settleVoucher(transaction, "paid")
     if (transaction.txType === TransactionTypes.hotel && transaction.hotelBookingId) {
-        const { startHotelBooking } = await import("../../hotels/services/hotel-booking.service.js")
-        startHotelBooking(transaction.hotelBookingId).catch((error) => logger.error(`[hotel-booking] start failed for ${transaction.hotelBookingId}: ${error.message}`))
+        // A confirmed payment approves the booking automatically, then books it with the hotel
+        const { onHotelPaymentConfirmed } = await import("../../hotels/services/hotel-booking.service.js")
+        onHotelPaymentConfirmed(transaction.hotelBookingId).catch((error) => logger.error(`[hotel-booking] start failed for ${transaction.hotelBookingId}: ${error.message}`))
     }
 }
 

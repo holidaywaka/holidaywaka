@@ -128,6 +128,9 @@ export type hotelBookingProps = {
     id: string;
     reference: string;
     status: hotelBookingStatus;
+    /** Approval gate: set automatically when the payment is confirmed, or by an admin */
+    approved: boolean;
+    approved_at: string | null;
     failure_reason: string | null;
     hid: number;
     hotel_name: string;
@@ -161,6 +164,8 @@ export type hotelBookingProps = {
 export type hotelBookingEvent = { at: string; event: string; detail: Record<string, unknown> | null }
 
 export type hotelAdminBookingProps = hotelBookingProps & {
+    /** "payment" when approved automatically, otherwise the admin's name */
+    approved_by: string | null;
     etg_status: string | null;
     partner_order_id: string | null;
     partner_order_ids: string[];
@@ -192,5 +197,6 @@ export type hotelAdminBookingsResponse = {
     total: number;
     total_pages: number;
     status_counts: Partial<Record<hotelBookingStatus, number>>;
+    approval_counts?: { approved: number; unapproved: number };
     data: hotelAdminBookingProps[];
 }

@@ -29,6 +29,19 @@ export const BookingStatusMeta: Record<hotelBookingStatus, { label: string; clas
 
 const TABS: (hotelBookingStatus | '')[] = ['', 'needs_attention', 'failed', 'awaiting_payment', 'booking', 'confirmed', 'cancelled', 'payment_declined']
 
+/** Bookings an admin can approve: not finished badly and not mid-booking */
+const canApprove = (booking: hotelAdminBookingProps) => !booking.approved && !['cancelled', 'payment_declined', 'booking'].includes(booking.status)
+
+export function ApprovalBadge({ booking }: { booking: Pick<hotelAdminBookingProps, 'approved' | 'approved_by'> }) {
+    if (!booking.approved) return <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap bg-slate-50 text-zinc-600 border-slate-200">Not approved</span>
+    return (
+        <span title={booking.approved_by === 'payment' ? 'Approved automatically when the payment was confirmed' : `Approved by ${booking.approved_by}`}
+            className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap bg-emerald-50 text-emerald-800 border-emerald-200">
+            {booking.approved_by === 'payment' ? 'Auto-approved' : 'Approved'}
+        </span>
+    )
+}
+
 export function BookingStatusBadge({ status }: { status: hotelBookingStatus }) {
     const meta = BookingStatusMeta[status]
     return <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap ${meta?.className ?? ''}`}>{meta?.label ?? status}</span>
@@ -37,11 +50,12 @@ export function BookingStatusBadge({ status }: { status: hotelBookingStatus }) {
 export default function HotelBookings() {
     const [searchParams, setSearchParams] = useSearchParams()
     const status = searchParams.get('status') ?? ''
+    const approved = searchParams.get('approved') ?? ''
     const page = Number(searchParams.get('page') || 1)
     const [search, setSearch] = React.useState(searchParams.get('search') ?? '')
     const [selectedId, setSelectedId] = React.useState<string | null>(null)
 
-    const params = new URLSearchParams({ page: String(page), page_size: '20', ...(status ? { status } : {}), ...(searchParams.get('search') ? { search: searchParams.get('search')! } : {}) })
+    const params = new URLSearchParams({ page: String(page), page_size: '20', ...(status ? { status } : {}), ...(approved ? { approved } : {}), ...(searchParams.get('search') ? { search: searchParams.get('search')! } : {}) })
     const { data, isLoading, isFetching, isError, error, refetch } = useQuery<hotelAdminBookingsResponse>({
         queryKey: ['admin-hotel-bookings', params.toString()],
         queryFn: () => createResponse({ endpoint: `${NewApis.hotels.admin_bookings}?${params}` }),
@@ -56,6 +70,20 @@ export default function HotelBookings() {
     }
 
     const totalAll = Object.values(data?.status_counts ?? {}).reduce((sum, value) => sum + (value ?? 0), 0)
+
+    const queryClient = useQueryClient()
+    const quickApprove = useMutation({
+        mutationFn: (booking: hotelAdminBookingProps) => createResponse({ endpoint: NewApis.hotels.admin_approve(booking.id), method: 'POST', data: {} }),
+        onSuccess: (response) => { getAlert(response?.message ?? 'Booking approved', 'success'); queryClient.invalidateQueries({ queryKey: ['admin-hotel-bookings'] }) },
+        onError: (error) => getAlert((error as Error).message, 'error'),
+    })
+    function approveFromList(booking: hotelAdminBookingProps) {
+        const unpaid = booking.payment?.status !== 'PAID'
+        const question = unpaid
+            ? `Approve ${booking.reference}? This confirms the guest's payment of ${formatMoney(booking.amount, booking.currency)} and books the room with the hotel.`
+            : `Approve ${booking.reference}?`
+        if (window.confirm(question)) quickApprove.mutate(booking)
+    }
 
     return (
         <div>
@@ -79,10 +107,20 @@ export default function HotelBookings() {
                             )
                         })}
                     </div>
+                    <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                    <div className="inline-flex rounded-md border border-slate-300 p-0.5" role="group" aria-label="Approval">
+                        {([['', 'Any approval'], ['true', `Approved ${data?.approval_counts?.approved ?? ''}`], ['false', `Not approved ${data?.approval_counts?.unapproved ?? ''}`]] as const).map(([value, label]) => (
+                            <button key={value || 'any'} type="button" aria-pressed={approved === value} onClick={() => update({ approved: value, page: '' })}
+                                className={`h-8 px-2.5 rounded text-xs font-medium cursor-pointer transition-colors ${approved === value ? 'bg-primary text-white' : 'text-zinc-700 hover:bg-slate-100'}`}>
+                                {label}
+                            </button>
+                        ))}
+                    </div>
                     <form onSubmit={(event) => { event.preventDefault(); update({ search: search.trim(), page: '' }) }} className="flex items-center gap-2 h-9 px-3 rounded-md border border-slate-300 w-full sm:w-72">
                         <FiSearch className="text-zinc-400" />
                         <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Reference, hotel, guest or email" className="w-full text-sm! outline-none bg-transparent" />
                     </form>
+                    </div>
                 </div>
 
                 {/* A failed request must not look like "no bookings" */}
@@ -106,13 +144,14 @@ export default function HotelBookings() {
                                 <th className="p-3 text-right">Amount</th>
                                 <th className="p-3">Payment</th>
                                 <th className="p-3">Status</th>
+                                <th className="p-3">Approval</th>
                                 <th className="p-3">Created</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {isLoading && Array.from({ length: 6 }).map((_, index) => <tr key={index}><td colSpan={8} className="p-3"><Skeleton height={20} /></td></tr>)}
-                            {!isLoading && isError && !data && <tr><td colSpan={8} className="p-10 text-center text-red-600">Bookings could not be loaded. Use "Try again" above.</td></tr>}
-                            {!isLoading && data?.data.length === 0 && <tr><td colSpan={8} className="p-10 text-center text-zinc-500">No hotel bookings{status ? ` with status "${BookingStatusMeta[status as hotelBookingStatus]?.label}"` : ''} yet.</td></tr>}
+                            {isLoading && Array.from({ length: 6 }).map((_, index) => <tr key={index}><td colSpan={9} className="p-3"><Skeleton height={20} /></td></tr>)}
+                            {!isLoading && isError && !data && <tr><td colSpan={9} className="p-10 text-center text-red-600">Bookings could not be loaded. Use "Try again" above.</td></tr>}
+                            {!isLoading && data?.data.length === 0 && <tr><td colSpan={9} className="p-10 text-center text-zinc-500">No hotel bookings{status ? ` with status "${BookingStatusMeta[status as hotelBookingStatus]?.label}"` : ''} yet.</td></tr>}
                             {data?.data.map((booking) => (
                                 <tr key={booking.id} onClick={() => setSelectedId(booking.id)} className="cursor-pointer hover:bg-slate-50">
                                     <td className="p-3 font-semibold text-zinc-900 whitespace-nowrap">{booking.reference}</td>
@@ -122,6 +161,18 @@ export default function HotelBookings() {
                                     <td className="p-3 text-right tabular-nums whitespace-nowrap">{formatMoney(booking.amount, booking.currency)}</td>
                                     <td className="p-3 whitespace-nowrap"><div>{booking.payment?.status ?? '-'}</div><div className="text-xs text-zinc-500">{booking.payment?.type === 'UNIFIED_PAYMENT_TRANSFER' ? 'Unified Payment' : 'Bank transfer'}{booking.payment?.has_proof ? ' · slip uploaded' : ''}</div></td>
                                     <td className="p-3"><BookingStatusBadge status={booking.status} /></td>
+                                    <td className="p-3 whitespace-nowrap">
+                                        <div className="flex items-center gap-2">
+                                            <ApprovalBadge booking={booking} />
+                                            {canApprove(booking) && (
+                                                <button type="button" disabled={quickApprove.isPending}
+                                                    onClick={(event) => { event.stopPropagation(); approveFromList(booking) }}
+                                                    className="h-7 px-2 rounded-md bg-primary text-white text-xs font-semibold cursor-pointer disabled:opacity-50">
+                                                    Approve
+                                                </button>
+                                            )}
+                                        </div>
+                                    </td>
                                     <td className="p-3 whitespace-nowrap text-zinc-500">{dayjs(booking.created_at).format('D MMM, HH:mm')}</td>
                                 </tr>
                             ))}
@@ -172,6 +223,8 @@ function BookingDetail({ id }: { id: string }) {
     const [cancelReason, setCancelReason] = React.useState('')
     const [confirmCancel, setConfirmCancel] = React.useState(false)
     const [declineReason, setDeclineReason] = React.useState('')
+    const [unapproveReason, setUnapproveReason] = React.useState('')
+    const [confirmUnapprove, setConfirmUnapprove] = React.useState(false)
 
     const refresh = () => {
         queryClient.invalidateQueries({ queryKey: ['admin-hotel-booking', id] })
@@ -179,7 +232,7 @@ function BookingDetail({ id }: { id: string }) {
     }
     const action = useMutation({
         mutationFn: ({ endpoint, method = 'POST', body }: { endpoint: string; method?: 'POST' | 'PUT'; body?: unknown }) => createResponse({ endpoint, method, data: body ?? {} }),
-        onSuccess: (response) => { getAlert(response?.message ?? 'Done', 'success'); refresh(); setConfirmCancel(false) },
+        onSuccess: (response) => { getAlert(response?.message ?? 'Done', 'success'); refresh(); setConfirmCancel(false); setConfirmUnapprove(false) },
         onError: (error) => getAlert((error as Error).message, 'error'),
     })
 
@@ -206,6 +259,47 @@ function BookingDetail({ id }: { id: string }) {
             </div>
             {data.failure_reason && <div className="rounded-md border border-orange-200 bg-orange-50 p-2 text-orange-900">{data.failure_reason}</div>}
 
+            <Card title="Approval" actions={<ApprovalBadge booking={data} />}>
+                <div className="text-zinc-600">
+                    {data.approved
+                        ? data.approved_by === 'payment'
+                            ? `Approved automatically when the payment was confirmed${data.approved_at ? ` on ${dayjs(data.approved_at).format('D MMM YYYY, HH:mm')}` : ''}.`
+                            : `Approved by ${data.approved_by}${data.approved_at ? ` on ${dayjs(data.approved_at).format('D MMM YYYY, HH:mm')}` : ''}.`
+                        : 'Not approved. Bookings are approved automatically once payment is confirmed.'}
+                </div>
+                <div className="flex flex-wrap gap-2 mt-3">
+                    {canApprove(data) && (
+                        <button type="button" disabled={busy} onClick={() => {
+                            const unpaid = transaction?.payment_status !== 'PAID'
+                            if (unpaid && !window.confirm(`Approving confirms the guest's payment of ${formatMoney(data.amount, data.currency)} and books the room with the hotel. Continue?`)) return
+                            action.mutate({ endpoint: NewApis.hotels.admin_approve(id) })
+                        }} className={`${button} bg-primary text-white`}>
+                            {transaction?.payment_status !== 'PAID' ? 'Approve & book' : 'Approve'}
+                        </button>
+                    )}
+                    {data.approved && data.status !== 'booking' && !confirmUnapprove && (
+                        <button type="button" onClick={() => setConfirmUnapprove(true)} className={`${button} border border-red-300 text-red-700`}>Unapprove</button>
+                    )}
+                    {data.status === 'booking' && <span className="text-xs text-zinc-500">The hotel is confirming this booking. Approval can be changed once it finishes.</span>}
+                </div>
+                {confirmUnapprove && (
+                    <div className="mt-3 rounded-md border border-red-200 bg-red-50 p-3 space-y-2">
+                        <div className="text-red-900">
+                            {data.status === 'confirmed'
+                                ? `Unapproving a confirmed booking cancels it with the hotel. ${data.free_cancellation_before && dayjs(data.free_cancellation_before).isAfter(dayjs()) ? `Free cancellation applies until ${dayjs(data.free_cancellation_before).format('D MMM YYYY, HH:mm')}.` : 'It is outside free cancellation, so the supplier will charge a fee.'} The guest is emailed; refund them manually.`
+                                : data.status === 'awaiting_payment' && transaction?.payment_status !== 'PAID'
+                                    ? 'Unapproving declines the payment and the guest is emailed.'
+                                    : "The booking stays as it is, but it can't be retried with the hotel until it is approved again."}
+                        </div>
+                        <input value={unapproveReason} onChange={(event) => setUnapproveReason(event.target.value)} placeholder="Reason" className="h-9 w-full px-2 rounded-md border border-slate-300 text-sm! outline-none bg-white" />
+                        <div className="flex gap-2">
+                            <button type="button" disabled={busy} onClick={() => action.mutate({ endpoint: NewApis.hotels.admin_unapprove(id), body: { reason: unapproveReason || undefined } })} className={`${button} bg-red-700 text-white`}>{busy ? 'Working…' : 'Confirm unapprove'}</button>
+                            <button type="button" onClick={() => setConfirmUnapprove(false)} className={`${button} border border-slate-300`}>Keep approved</button>
+                        </div>
+                    </div>
+                )}
+            </Card>
+
             <Card title="Payment">
                 <Row label="Customer paid">{formatMoney(data.amount, data.currency)}{data.discount > 0 ? ` (voucher ${data.voucher_code}: -${formatMoney(data.discount, data.currency)})` : ''}</Row>
                 <Row label="Method">{transaction?.payment_type === 'UNIFIED_PAYMENT_TRANSFER' ? 'Unified Payment checkout' : 'Bank transfer'}</Row>
@@ -216,7 +310,7 @@ function BookingDetail({ id }: { id: string }) {
                     <div className="mt-3 space-y-2 rounded-md bg-slate-50 p-2">
                         <div className="text-xs text-zinc-600">Confirm the bank transfer to start the booking with the hotel, or decline it.</div>
                         <div className="flex flex-wrap gap-2">
-                            <button type="button" disabled={busy} onClick={() => markPayment('PAID')} className={`${button} bg-primary text-white`}>Mark as paid & book</button>
+                            <button type="button" disabled={busy} onClick={() => action.mutate({ endpoint: NewApis.hotels.admin_approve(id) })} className={`${button} bg-primary text-white`}>Mark as paid & book</button>
                             <input value={declineReason} onChange={(event) => setDeclineReason(event.target.value)} placeholder="Decline reason (emailed to the guest)" className="h-9 flex-1 min-w-40 px-2 rounded-md border border-slate-300 text-sm! outline-none" />
                             <button type="button" disabled={busy} onClick={() => markPayment('Declined')} className={`${button} border border-red-300 text-red-700`}>Decline</button>
                         </div>
@@ -257,7 +351,7 @@ function BookingDetail({ id }: { id: string }) {
                 {data.has_voucher && (
                     <button type="button" onClick={() => downloadFile(NewApis.hotels.admin_voucher(id), `voucher-${data.reference}.pdf`).catch((error) => getAlert(error.message, 'error'))} className={`${button} border border-slate-300`}>Download voucher</button>
                 )}
-                {['needs_attention', 'failed'].includes(data.status) && transaction?.payment_status === 'PAID' && (
+                {['needs_attention', 'failed'].includes(data.status) && transaction?.payment_status === 'PAID' && data.approved && (
                     <button type="button" disabled={busy} onClick={() => action.mutate({ endpoint: NewApis.hotels.admin_retry(id) })} className={`${button} bg-primary text-white`}>{busy ? 'Booking…' : 'Retry booking'}</button>
                 )}
                 {data.status === 'confirmed' && !confirmCancel && (

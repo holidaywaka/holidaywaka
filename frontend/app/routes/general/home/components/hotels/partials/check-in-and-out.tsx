@@ -1,4 +1,5 @@
 import { Popover } from '@mantine/core';
+import { DROPDOWN_POPOVER, useDropdownField } from './search-field';
 import { DatePicker } from '@mantine/dates'
 import dayjs from 'dayjs';
 import type { UseFormReturnType } from '@mantine/form';
@@ -13,7 +14,7 @@ export default function CheckInAndOut(props: props) {
     const checkIn = props.form.values.checkin ?? null;
     const checkOut = props.form.values.checkout ?? null;
     const error = props.form.errors.checkin;
-    const [opened, setOpened] = React.useState(false);
+    const { ref: fieldRef, opened, setOpened, open } = useDropdownField();
 
     function action([start, end]: [string | null, string | null]) {
         props.form.setFieldValue('checkin', start);
@@ -22,10 +23,11 @@ export default function CheckInAndOut(props: props) {
     }
     return (
         <>
-            <Popover opened={opened} onChange={setOpened}>
+            <Popover opened={opened} onChange={(next) => next ? open() : setOpened(false)} {...DROPDOWN_POPOVER}>
                 <Popover.Target>
                     <div
-                        onClick={() => setOpened((o) => !o)}
+                        ref={fieldRef}
+                        onClick={() => opened ? setOpened(false) : open()}
                         className={`grid grid-cols-2 md:col-span-5 rounded-lg border ${error ? 'border-red-500' : 'border-gray-300'} relative`}>
                         <div className="border-r border-gray-300 px-2 py-3 cursor-pointer active:scale-95 transition-all">
                             <div className="text-xs text-zinc-500 mb-1">Check-in</div>

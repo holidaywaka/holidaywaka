@@ -1,17 +1,17 @@
-import { useSearchParams } from 'react-router'
+import React from 'react'
+import { MdOutlineAirportShuttle, MdOutlineBeachAccess, MdOutlineHotel } from 'react-icons/md'
+import { isProductionSite } from '~/components/utils'
 import Hotels from '~/routes/general/home/components/hotels';
 import Transfers from '~/routes/general/home/components/transfers';
+import PackagesSearch from '~/routes/general/home/components/packages-search';
 
+type ServiceKey = 'hotels' | 'transfers' | 'packages'
 
-const listings = [
-  {
-    img: `/images/hotel.png`,
-    title: `hotels`
-  },
-  {
-    img: `/images/airport-taxi.png`,
-    title: `transfers`
-  },
+// Widget order: hotel, transfer, holiday packages
+const SERVICES: { key: ServiceKey; label: string; short: string; Icon: React.ComponentType<{ className?: string }> }[] = [
+  { key: 'hotels', label: 'Hotels', short: 'Hotels', Icon: MdOutlineHotel },
+  { key: 'transfers', label: 'Transfers', short: 'Transfers', Icon: MdOutlineAirportShuttle },
+  { key: 'packages', label: 'Holiday packages', short: 'Packages', Icon: MdOutlineBeachAccess },
 ]
 
 type props = {
@@ -19,37 +19,68 @@ type props = {
 }
 
 export default function HomeCard(props: props) {
-  const [searchParams, setSearchParams] = useSearchParams();
+  // Hotels are not live on holidaywaka.com yet: hidden there
+  const services = isProductionSite() ? SERVICES.filter((item) => item.key !== 'hotels') : SERVICES
+  // Internal state only: switching services never touches the URL
+  const [selected, setSelected] = React.useState<ServiceKey>(services[0].key)
+  const service = services.some((item) => item.key === selected) ? selected : services[0].key
+  const tabRefs = React.useRef<(HTMLButtonElement | null)[]>([])
 
-  const hostname = window.location.hostname;
-  const isProd = hostname === "holidaywaka.com" || hostname === "www.holidaywaka.com";
-  // Hotels are not live on production yet: the tabs are hidden there and the search is always transfers,
-  // even if a ?service=hotels link is shared
-  const service = isProd ? 'transfers' : (searchParams.get('service') ?? listings[0].title);
-
-  function handleActive(title: string) {
-    const search = new URLSearchParams(searchParams);
-    search.delete("service");
-    search.append("service", title)
-    setSearchParams(search);
+  function select(key: ServiceKey) {
+    setSelected(key)
   }
-  
+
+  // Arrow keys move between tabs (WAI-ARIA tabs pattern)
+  function onKeyDown(event: React.KeyboardEvent, index: number) {
+    const step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0
+    if (!step) return
+    event.preventDefault()
+    const next = (index + step + services.length) % services.length
+    select(services[next].key)
+    tabRefs.current[next]?.focus()
+  }
 
   return (
     <div className="-mt-30 z-10 mx-auto w-[95%] relative">
-      {props.tag === 'home' && <div className={`${isProd ? 'hidden' : ''}`}>
-        <div className="flex items-center gap-2 ml-3">
-          {listings.map((item, index) => (
-            <div
-              onClick={() => handleActive(item.title)}
-              className={`cursor-pointer w-22 active:scale-95 transition-all p-1.5 flex items-center flex-col gap-1 text-sm ${service === item.title ? 'bg-white mt-3 rounded-t-md font-semibold' : 'bg-white mb-1 rounded-md'}`} key={index}>
-              <img src={item.img} alt={item.title} className={`${index === 0 ? 'size-8' : 'size-7'} object-cover rounded-md`} />
-              <div className="capitalize">{item.title}</div>
-            </div>
-          ))}
+      {props.tag === 'home' && (
+        <div role="tablist" aria-label="What would you like to book?" className="grid grid-flow-col auto-cols-fr items-end gap-1.5 px-1 md:flex md:px-4">
+          {services.map((item, index) => {
+            const active = service === item.key
+            return (
+              <button
+                key={item.key}
+                ref={(element) => { tabRefs.current[index] = element }}
+                role="tab"
+                id={`service-tab-${item.key}`}
+                aria-selected={active}
+                aria-controls="service-panel"
+                tabIndex={active ? 0 : -1}
+                type="button"
+                onClick={() => select(item.key)}
+                onKeyDown={(event) => onKeyDown(event, index)}
+                className={`relative min-w-0 inline-flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-2 rounded-t-xl px-2 md:px-5 cursor-pointer transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-inset
+                  ${active
+                    ? 'h-16 md:h-14 bg-white text-primary font-bold shadow-[0_-6px_16px_-8px_rgba(0,0,0,0.25)]'
+                    : 'h-14 md:h-12 mb-1 rounded-b-xl bg-primary/55 text-white/85 font-medium backdrop-blur-md border border-white/20 hover:bg-primary/75 hover:text-white'}`}
+              >
+                {/* Sand bar marks the selected service */}
+                <span aria-hidden className={`absolute top-0 left-3 right-3 h-[3px] rounded-b-full bg-secondary transition-opacity ${active ? 'opacity-100' : 'opacity-0'}`} />
+                <item.Icon className={`size-5 ${active ? 'text-primary' : 'text-secondary'}`} />
+                <span className="text-xs sm:text-sm md:text-base whitespace-nowrap">
+                  <span className="md:hidden">{item.short}</span>
+                  <span className="hidden md:inline">{item.label}</span>
+                </span>
+              </button>
+            )
+          })}
         </div>
-      </div>}
-      <div className='bg-white py-4 px-3 rounded-xl md:px-5 relative'>
+      )}
+      <div
+        id="service-panel"
+        role={props.tag === 'home' ? 'tabpanel' : undefined}
+        aria-labelledby={props.tag === 'home' ? `service-tab-${service}` : undefined}
+        className="bg-white py-4 px-3 md:px-5 relative rounded-xl"
+      >
         <DisplayService tag={props.tag} service={service} />
       </div>
     </div>
@@ -58,7 +89,7 @@ export default function HomeCard(props: props) {
 
 type DisplayServiceProps = {
   tag: props["tag"]
-  service: string
+  service: ServiceKey
 }
 function DisplayService(props: DisplayServiceProps) {
   if (props.tag === "hotels") return <Hotels isHome={true} />
@@ -67,7 +98,7 @@ function DisplayService(props: DisplayServiceProps) {
     <>
       {props.service === "hotels" && <Hotels isHome={true} />}
       {props.service === "transfers" && <Transfers />}
+      {props.service === "packages" && <PackagesSearch />}
     </>
   );
-
 }

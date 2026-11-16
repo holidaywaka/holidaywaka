@@ -38,11 +38,13 @@ const options = {
 transporter.use('compile', hbs(options))
 
 // `context` carries template-specific data (e.g. sections/totals for transaction.handlebars)
-const SendMail = async ({ mailTo, subject, template, content, fullname, message, message2, context = {} }) => {
+// Resolves true when the message was handed to the mail server, false otherwise (errors are logged, never thrown)
+const SendMail = async ({ mailTo, replyTo, subject, template, content, fullname, message, message2, context = {} }) => {
     try {
         await transporter.sendMail({
             from: `"${process.env.MAIL_NAME}" <${process.env.MAIL_USER}>`,
             to: mailTo,
+            ...(replyTo ? { replyTo } : {}),
             subject: subject,
             template,
             context: {
@@ -56,8 +58,10 @@ const SendMail = async ({ mailTo, subject, template, content, fullname, message,
                 MAIL_USER: process.env.MAIL_USER,
             },
         });
+        return true
     } catch (error) {
         console.log(error)
+        return false
     }
 }
 

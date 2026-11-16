@@ -19,6 +19,7 @@ import { etgStayPayload, HotelServiceError, SEARCH_LANGUAGE } from "./hotel-sear
 import { normalizeRate } from "./rate-normalizer.js"
 import { findUsableVoucher, reserveVoucher, voucherDiscount } from "../../vouchers/services/voucher.service.js"
 import { MailKinds, sendTransactionMail } from "../../notifications/services/transaction-mail.js"
+import { markTransactionDeclined, markTransactionPaid } from "../../payments/services/payment-events.js"
 
 /**
  * Steps 4 (booking) and 5 (post-booking) of the ETG integration.
@@ -37,6 +38,8 @@ const BOOKING_EMAIL = process.env.RATEHAWK_BOOKING_EMAIL || process.env.MAIL_USE
 const BOOKING_PHONE = process.env.RATEHAWK_BOOKING_PHONE || null
 const ORDER_INFO_DELAY_MS = 2 * 60 * 1000
 const MAX_EVENTS = 60
+// One guest complaint per booking every few minutes (double submits, abuse)
+const COMPLAINT_COOLDOWN_MS = 5 * 60 * 1000
 
 // Error groups from the ETG integration requirements
 const FORM_RETRYABLE = ["double_booking_form", "duplicate_reservation", "timeout", "unknown"]
@@ -97,6 +100,8 @@ export function serializeBooking(booking, { admin = false } = {}) {
         id: booking.id,
         reference: booking.reference,
         status: booking.status,
+        approved: Boolean(booking.approved),
+        approved_at: booking.approvedAt,
         failure_reason: booking.failureReason,
         hid: Number(booking.hid),
         hotel_name: booking.hotelName,
@@ -128,6 +133,7 @@ export function serializeBooking(booking, { admin = false } = {}) {
     if (!admin) return base
     return {
         ...base,
+        approved_by: booking.approvedBy,
         etg_status: booking.etgStatus,
         partner_order_id: booking.partnerOrderId,
         partner_order_ids: booking.partnerOrderIds,
@@ -769,8 +775,17 @@ export async function downloadVoucher(bookingId) {
         const result = await ratehawkConfig.download({
             endpoint: ratehawkConfig.apis.b2b_voucher_download,
             params: { data: JSON.stringify({ partner_order_id: booking.partnerOrderId, language: SEARCH_LANGUAGE }) },
+            timeout: RT_TIMEOUTS.booking,
         })
-        return { ...result, filename: `voucher-${booking.reference}.pdf` }
+        // Never hand the guest a file that isn't a real PDF (empty body, HTML error page, placeholder)
+        const file = result.file ?? Buffer.alloc(0)
+        const isPdf = file.length > 1024 && file.subarray(0, 1024).includes("%PDF-") && file.subarray(-2048).includes("%%EOF")
+        if (!isPdf) {
+            logger.warn(`[hotel-booking] voucher for ${booking.reference} (${booking.partnerOrderId}) is not a valid PDF: ${file.length} bytes, type ${result.contentType}, starts ${JSON.stringify(file.subarray(0, 64).toString("latin1"))}`)
+            await addEvent(booking, "voucher_invalid", { bytes: file.length, content_type: result.contentType })
+            throw new HotelServiceError(409, "Your voucher is still being prepared. Please try again in a few minutes.", "voucher_invalid")
+        }
+        return { file, contentType: "application/pdf", filename: `voucher-${booking.reference}.pdf` }
     } catch (error) {
         const code = codeOf(error)
         if (["pending", "failed_to_generate_document", "voucher_is_not_downloadable"].includes(code)) {
@@ -788,9 +803,187 @@ export async function retryHotelBooking(bookingId) {
     if (transaction?.paymentStatus !== ServerTransactionStatusOptions.paid) {
         throw new HotelServiceError(409, "The booking can only be retried once the payment is confirmed", "not_paid")
     }
+    if (!booking.approved) throw new HotelServiceError(409, "Approve the booking before retrying it with the hotel", "not_approved")
     const outcome = await startHotelBooking(bookingId, { from: [HotelBookingStatus.needs_attention, HotelBookingStatus.failed], wait: true })
     if (!outcome) throw new HotelServiceError(409, `A booking in status ${booking.status} cannot be retried`, "not_retryable")
     return serializeBooking(outcome, { admin: true })
+}
+
+// ------------------------------------------------------------------ approval gate
+
+/** Flags a booking approved (idempotent). by: "payment" when automatic, otherwise the admin */
+async function setApproved(booking, by) {
+    const [count] = await db.HotelBookings.update(
+        { approved: true, approvedAt: new Date(), approvedBy: by },
+        { where: { id: booking.id, approved: false } }
+    )
+    await booking.reload()
+    if (count > 0) await addEvent(booking, "approved", { by })
+    return count > 0
+}
+
+/**
+ * A confirmed payment approves the booking and starts the hotel booking (called from payment-events).
+ * When an admin approved first, the flag is already set and keeps their name.
+ */
+export async function onHotelPaymentConfirmed(bookingId) {
+    const booking = await db.HotelBookings.findByPk(bookingId)
+    if (!booking) return null
+    // A late payment on a declined/cancelled booking books nothing, so it must not show as approved
+    if ([HotelBookingStatus.cancelled, HotelBookingStatus.payment_declined].includes(booking.status)) {
+        await addEvent(booking, "payment_after_close", { status: booking.status })
+        logger.warn(`[hotel-booking] ${booking.reference}: payment confirmed while ${booking.status}; not approved or booked`)
+        return null
+    }
+    await setApproved(booking, "payment")
+    return startHotelBooking(bookingId)
+}
+
+/**
+ * Admin approval. Unpaid (bank transfer): confirms the payment, which books the hotel automatically.
+ * Already paid: records the approval (a failed booking is then retried with "Retry booking").
+ */
+export async function approveHotelBooking(bookingId, { by }) {
+    const booking = await db.HotelBookings.findByPk(bookingId)
+    if (!booking) throw new HotelServiceError(404, "Booking not found", "booking_not_found")
+    if ([HotelBookingStatus.cancelled, HotelBookingStatus.payment_declined].includes(booking.status)) {
+        throw new HotelServiceError(409, "A cancelled or declined booking can't be approved. Ask the guest to book again.", "not_approvable")
+    }
+    const transaction = await loadTransaction(booking)
+    if (!transaction) throw new HotelServiceError(409, "This booking has no payment record", "no_transaction")
+
+    await setApproved(booking, by)
+    if (transaction.paymentStatus !== ServerTransactionStatusOptions.paid) {
+        // afterPaid -> onHotelPaymentConfirmed starts the hotel booking in the background. Wait (briefly) until it
+        // has, so the admin sees "Booking..." and their screen keeps polling, rather than a stale "Awaiting payment"
+        await markTransactionPaid(transaction, { source: `admin approval (${by})` })
+        for (let attempt = 0; attempt < 20 && booking.status === HotelBookingStatus.awaiting_payment; attempt++) {
+            await sleep(150)
+            await booking.reload()
+        }
+    }
+    return getBooking(bookingId, { admin: true })
+}
+
+/**
+ * Admin unapproval:
+ *   unpaid            -> payment declined (the guest is emailed)
+ *   confirmed         -> cancelled with the hotel (supplier penalties apply)
+ *   booking (running) -> refused until the supplier answers
+ *   anything else     -> flag cleared, which blocks "Retry booking"
+ */
+export async function unapproveHotelBooking(bookingId, { by, reason }) {
+    const booking = await db.HotelBookings.findByPk(bookingId)
+    if (!booking) throw new HotelServiceError(404, "Booking not found", "booking_not_found")
+    if (booking.status === HotelBookingStatus.booking) {
+        throw new HotelServiceError(409, "The hotel is confirming this booking right now. Try again once it has finished.", "booking_in_progress")
+    }
+
+    const transaction = await loadTransaction(booking)
+    if (booking.status === HotelBookingStatus.confirmed) {
+        await cancelHotelBooking(bookingId, { reason: reason || `Unapproved by ${by}` })
+    } else if (transaction && booking.status === HotelBookingStatus.awaiting_payment && transaction.paymentStatus !== ServerTransactionStatusOptions.paid) {
+        await markTransactionDeclined(transaction, { reason: reason || "Booking was not approved", source: `admin unapproval (${by})` })
+    }
+
+    await booking.reload()
+    await booking.update({ approved: false, approvedAt: null, approvedBy: null })
+    await addEvent(booking, "unapproved", { by, reason: reason || null })
+    return getBooking(bookingId, { admin: true })
+}
+
+// ------------------------------------------------------------------ guest self-service
+
+/**
+ * "hw-ab12cd34", "AB12CD34" and "HW AB12CD34" all mean HW-AB12CD34. A code can itself start with "HW"
+ * (HW-HWAB1234 typed as "HWAB1234"), so both readings are tried.
+ */
+function referenceCandidates(value) {
+    const raw = String(value ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "")
+    return [...new Set([`HW-${raw.replace(/^HW/, "")}`, `HW-${raw}`])]
+}
+
+async function findGuestBooking({ reference, email }) {
+    const matches = await db.HotelBookings.findAll({ where: { reference: { [Op.in]: referenceCandidates(reference) } }, limit: 2 })
+    const booking = matches.find((item) => item.email === String(email ?? "").trim().toLowerCase())
+    // Same answer for a wrong reference and a wrong email, so references can't be probed
+    if (!booking) {
+        throw new HotelServiceError(404, "We couldn't find a booking with that reference and email address", "booking_not_found")
+    }
+    return booking
+}
+
+/** Track a reservation: reference + booking email */
+export async function trackGuestBooking({ reference, email }) {
+    const booking = await findGuestBooking({ reference, email })
+    return getBooking(booking.id)
+}
+
+/** Booking facts both teams need to act on a complaint */
+function complaintFacts(booking) {
+    const money = `${Number(booking.amount).toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${booking.currency}`
+    return [
+        { label: "Holidaywaka reference", value: booking.reference },
+        { label: "ETG order id", value: booking.etgOrderId ? String(booking.etgOrderId) : "Not booked with the supplier" },
+        { label: "Partner order id", value: booking.partnerOrderId ?? "-" },
+        { label: "Hotel confirmation no.", value: booking.hotelConfirmationNumber ?? "-" },
+        { label: "Booking status", value: booking.status },
+        { label: "Hotel", value: [booking.hotelName, booking.hotelAddress, booking.regionName].filter(Boolean).join(", ") },
+        { label: "Stay", value: `${dayjs(booking.checkin).format("D MMM YYYY")} - ${dayjs(booking.checkout).format("D MMM YYYY")}` },
+        { label: "Room", value: [booking.roomName, booking.mealLabel].filter(Boolean).join(" · ") || "-" },
+        { label: "Lead guest", value: `${booking.firstName} ${booking.lastName}` },
+        { label: "Guest email", value: booking.email },
+        { label: "Guest phone", value: booking.phone ?? "-" },
+        { label: "Amount paid", value: money },
+    ]
+}
+
+/**
+ * Guest complaint about a booking: emailed to Holidaywaka support and, when the booking exists at the supplier,
+ * directly to RateHawk support (RATEHAWK_SUPPORT_EMAIL) with the ETG identifiers. Replies go to the guest.
+ * @returns {{ holidaywaka: boolean, ratehawk: boolean|null }} null = not sent (not configured / not booked with ETG)
+ */
+export async function submitGuestComplaint({ reference, email, subject, message, sendMail, notifyAdmin }) {
+    const booking = await findGuestBooking({ reference, email })
+    const recent = [...(booking.events ?? [])].reverse().find((event) => event.event === "guest_complaint")
+    if (recent && Date.now() - new Date(recent.at).getTime() < COMPLAINT_COOLDOWN_MS) {
+        throw new HotelServiceError(429, "We've just received a message about this booking. Please wait a few minutes before sending another.", "complaint_cooldown")
+    }
+
+    const title = `Booking ${booking.reference}: ${subject?.trim() || "Guest complaint"}`
+    const facts = complaintFacts(booking)
+    const supportEmail = process.env.HOLIDAYWAKA_SUPPORT_EMAIL || process.env.MAIL_USER
+    const ratehawkEmail = process.env.RATEHAWK_SUPPORT_EMAIL
+    const atSupplier = Boolean(booking.partnerOrderId && booking.etgOrderId)
+
+    const mail = (to, intro) => sendMail({
+        mailTo: to,
+        replyTo: booking.email,
+        subject: title,
+        template: "complaint",
+        context: { intro, guestMessage: message.trim(), facts, reference: booking.reference },
+    })
+
+    const holidaywaka = supportEmail
+        ? await mail(supportEmail, `${booking.firstName} ${booking.lastName} reported a problem with hotel booking ${booking.reference}. Reply to this email to answer the guest directly.`)
+        : false
+    const ratehawk = ratehawkEmail && atSupplier
+        ? await mail(ratehawkEmail, `A Holidaywaka guest reported a problem with ETG order ${booking.etgOrderId} (partner order ${booking.partnerOrderId}). Please assist. Replies reach the guest directly.`)
+        : null
+
+    if (!holidaywaka && !ratehawk) {
+        // Recorded under a different event name so the guest can retry straight away
+        await addEvent(booking, "guest_complaint_failed", { subject: subject?.trim() || null })
+        throw new HotelServiceError(502, "We couldn't send your message right now. Please try again shortly or email us directly.", "complaint_not_sent")
+    }
+
+    await addEvent(booking, "guest_complaint", { subject: subject?.trim() || null, message: message.trim().slice(0, 500), holidaywaka, ratehawk })
+    try {
+        await notifyAdmin?.(`Guest complaint on ${booking.reference}`, `${booking.firstName} ${booking.lastName}: ${message.trim().slice(0, 180)}`)
+    } catch (error) {
+        logger.warn(`[hotel-booking] complaint notification for ${booking.reference} failed: ${error.message}`)
+    }
+    return { holidaywaka, ratehawk }
 }
 
 // ------------------------------------------------------------------ recovery
@@ -818,9 +1011,10 @@ export async function resumeInterruptedBookings() {
 
 // ------------------------------------------------------------------ admin listing
 
-export async function listBookings({ status, search, page = 1, pageSize = 20 }) {
+export async function listBookings({ status, approved, search, page = 1, pageSize = 20 }) {
     const where = {}
     if (status) where.status = status
+    if (approved === "true" || approved === "false") where.approved = approved === "true"
     if (search?.trim()) {
         const term = `%${search.trim()}%`
         where[Op.or] = [
@@ -843,17 +1037,28 @@ export async function listBookings({ status, search, page = 1, pageSize = 20 }) 
         attributes: ["id", "paymentStatus", "paymentType", "txid", "image"],
     })
     const byId = new Map(transactions.map((item) => [item.id, item]))
-    const counts = await db.HotelBookings.findAll({
-        attributes: ["status", [db.sequelize.fn("COUNT", db.sequelize.col("id")), "count"]],
-        group: ["status"],
-        raw: true,
-    })
+    const [counts, approvalCounts] = await Promise.all([
+        db.HotelBookings.findAll({
+            attributes: ["status", [db.sequelize.fn("COUNT", db.sequelize.col("id")), "count"]],
+            group: ["status"],
+            raw: true,
+        }),
+        db.HotelBookings.findAll({
+            attributes: ["approved", [db.sequelize.fn("COUNT", db.sequelize.col("id")), "count"]],
+            group: ["approved"],
+            raw: true,
+        }),
+    ])
     return {
         page,
         page_size: pageSize,
         total: count,
         total_pages: Math.max(1, Math.ceil(count / pageSize)),
         status_counts: Object.fromEntries(counts.map((row) => [row.status, Number(row.count)])),
+        approval_counts: {
+            approved: Number(approvalCounts.find((row) => Boolean(Number(row.approved)))?.count ?? 0),
+            unapproved: Number(approvalCounts.find((row) => !Number(row.approved))?.count ?? 0),
+        },
         data: rows.map((row) => {
             const transaction = byId.get(row.transactionId)
             return {

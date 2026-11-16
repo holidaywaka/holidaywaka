@@ -167,8 +167,30 @@ export const bookingIdParamValidator = () => [
     handleErrors,
 ]
 
+const trackValidators = () => [
+    body("reference").isString().trim().isLength({ min: 4, max: 32 }).withMessage("Enter your booking reference, e.g. HW-AB12CD34"),
+    body("email").isString().trim().isEmail().withMessage("Enter the email address used for the booking"),
+]
+
+/** Guest lookup: booking reference + the booking's email (the reference alone is not proof of ownership) */
+export const trackBookingValidator = () => [...trackValidators(), handleErrors]
+
+export const bookingComplaintValidator = () => [
+    ...trackValidators(),
+    body("subject").optional({ values: "falsy" }).isString().trim().isLength({ max: 120 }).withMessage("Keep the subject under 120 characters"),
+    body("message").isString().trim().isLength({ min: 10, max: 3000 }).withMessage("Describe the problem in 10 to 3000 characters"),
+    handleErrors,
+]
+
+export const unapproveBookingValidator = () => [
+    param("id").isUUID().withMessage("Invalid booking id"),
+    body("reason").optional({ values: "falsy" }).isString().trim().isLength({ max: 500 }).withMessage("Keep the reason under 500 characters"),
+    handleErrors,
+]
+
 export const adminBookingListValidator = () => [
     query("status").optional({ values: "falsy" }).isString(),
+    query("approved").optional({ values: "falsy" }).isIn(["true", "false"]).withMessage("approved must be true or false"),
     query("search").optional({ values: "falsy" }).isString().isLength({ max: 100 }),
     query("page").optional().isInt({ min: 1 }).toInt(),
     query("page_size").optional().isInt({ min: 1, max: 100 }).toInt(),

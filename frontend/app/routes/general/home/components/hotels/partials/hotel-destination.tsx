@@ -9,7 +9,7 @@ import { ApiCountries } from '~/components/general/ApiCountries'
 import type { HotelDestination as HotelDestinationValue, HotelDestinationsResponse, HotelPopularDestinationsResponse } from '~/routes/general/hotel-search/types'
 import { humanizeSlug, plural } from '~/routes/general/hotel-search/hotel-utils'
 import { useViewerCountry } from '~/routes/general/hotel-search/use-viewer-country'
-import { FieldTrigger, GroupHeading, Highlight, SearchInput, useListNavigation } from './search-field'
+import { DROPDOWN_POPOVER, FieldTrigger, GroupHeading, Highlight, SearchInput, useDropdownField, useListNavigation } from './search-field'
 
 type props = {
     value: HotelDestinationValue | null;
@@ -25,7 +25,8 @@ type Option =
     | { kind: 'hotel'; value: HotelDestinationValue; hotel: HotelDestinationsResponse['hotels'][number] }
 
 export default function HotelDestination(props: props) {
-    const [opened, setOpened] = React.useState(false)
+    // Scrolls the field clear of the sticky header before opening, so the list always opens fully below it
+    const { ref: fieldRef, opened, setOpened, open } = useDropdownField()
     const [search, setSearch] = React.useState("")
     const [debounced] = useDebouncedValue(search.trim(), 300)
     const canSearch = debounced.length >= 2
@@ -85,9 +86,9 @@ export default function HotelDestination(props: props) {
         : null
 
     return (
-        <Popover opened={opened} onChange={(next) => next ? setOpened(true) : close()} width="target" position="bottom-start" shadow="md" trapFocus={false}>
+        <Popover opened={opened} onChange={(next) => next ? open() : close()} width="target" {...DROPDOWN_POPOVER}>
             <Popover.Target>
-                <div>
+                <div ref={fieldRef}>
                     <FieldTrigger
                         label="Destination"
                         icon={props.value?.type === 'hotel' ? <Building className="size-5" /> : <Location className="size-5" />}
@@ -100,7 +101,7 @@ export default function HotelDestination(props: props) {
                         placeholder="City, region or hotel"
                         opened={opened}
                         error={props.error}
-                        onToggle={() => opened ? close() : setOpened(true)}
+                        onToggle={() => opened ? close() : open()}
                         onClear={() => props.onChange(null)}
                     />
                 </div>

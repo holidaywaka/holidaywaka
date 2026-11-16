@@ -33,6 +33,11 @@ function hotelBookingModelFn(sequelize) {
         regionName: DataTypes.STRING,
 
         status: { type: DataTypes.STRING(32), defaultValue: HotelBookingStatus.awaiting_payment },
+        // Approval gate: set automatically when the payment is confirmed, or by an admin
+        approved: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+        approvedAt: DataTypes.DATE,
+        // "payment" (automatic) or the admin who approved
+        approvedBy: DataTypes.STRING(128),
         // Last raw ETG status / error code, and a human-readable reason for failures
         etgStatus: DataTypes.STRING(64),
         failureReason: DataTypes.TEXT,

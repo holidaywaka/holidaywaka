@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { USER_TYPES } from "../../../config/utilities.js";
 import {
+    adminApproveHotelBooking,
+    adminUnapproveHotelBooking,
+    hotelBookingComplaint,
+    trackHotelBooking,
     adminCancelHotelBooking,
     adminHotelBookings,
     adminRefreshHotelBooking,
@@ -25,6 +29,9 @@ import {
 import { authenticate, authorized } from "../../../middleware/auth.js";
 import {
     adminBookingListValidator,
+    bookingComplaintValidator,
+    trackBookingValidator,
+    unapproveBookingValidator,
     bookingIdParamValidator,
     hotelBookingValidator,
     destinationQueryValidator,
@@ -53,6 +60,9 @@ route.get("/prebook/:id", prebookIdParamValidator(), singlePrebook);
 // ======================== step 4: booking (payment first, then ETG) ====================
 route.post("/bookings", hotelBookingValidator(), createHotelBooking);
 route.post("/bookings/webhook", hotelBookingWebhook);
+// Guest self-service: find a booking by reference + email, and report a problem with it
+route.post("/bookings/track", trackBookingValidator(), trackHotelBooking);
+route.post("/bookings/track/complaint", bookingComplaintValidator(), hotelBookingComplaint);
 route.get("/bookings/:id", bookingIdParamValidator(), singleHotelBooking);
 route.get("/bookings/:id/voucher", bookingIdParamValidator(), hotelBookingVoucher);
 
@@ -60,6 +70,8 @@ route.get("/bookings/:id/voucher", bookingIdParamValidator(), hotelBookingVouche
 const admin = [authenticate, authorized(USER_TYPES.admin)];
 route.get("/admin/bookings", admin, adminBookingListValidator(), adminHotelBookings);
 route.get("/admin/bookings/:id", admin, bookingIdParamValidator(), adminSingleHotelBooking);
+route.post("/admin/bookings/:id/approve", admin, bookingIdParamValidator(), adminApproveHotelBooking);
+route.post("/admin/bookings/:id/unapprove", admin, unapproveBookingValidator(), adminUnapproveHotelBooking);
 route.post("/admin/bookings/:id/cancel", admin, bookingIdParamValidator(), adminCancelHotelBooking);
 route.post("/admin/bookings/:id/retry", admin, bookingIdParamValidator(), adminRetryHotelBooking);
 route.post("/admin/bookings/:id/refresh", admin, bookingIdParamValidator(), adminRefreshHotelBooking);

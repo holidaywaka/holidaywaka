@@ -5,7 +5,7 @@ import { Global } from 'iconsax-reactjs'
 import { ApiCountries } from '~/components/general/ApiCountries'
 import { DEFAULT_RESIDENCY } from '~/routes/general/hotel-search/hotel-utils'
 import { useViewerCountry } from '~/routes/general/hotel-search/use-viewer-country'
-import { CountryFlag, FieldTrigger, GroupHeading, Highlight, SearchInput, useListNavigation } from './search-field'
+import { CountryFlag, DROPDOWN_POPOVER, FieldTrigger, GroupHeading, Highlight, SearchInput, useDropdownField, useListNavigation } from './search-field'
 
 type props = {
     /** ISO 3166-1 alpha-2, lowercase (ETG `residency`) */
@@ -18,7 +18,8 @@ type Country = (typeof ApiCountries)[number]
 const byCode = (code: string | null | undefined) => code ? ApiCountries.find((country) => country.code.toLowerCase() === code.toLowerCase()) : undefined
 
 export default function HotelNationality(props: props) {
-    const [opened, setOpened] = React.useState(false)
+    // Scrolls the field clear of the sticky header before opening, so the list always opens fully below it
+    const { ref: fieldRef, opened, setOpened, open } = useDropdownField()
     const [search, setSearch] = React.useState("")
     const viewerCountry = useViewerCountry()
     const selected = byCode(props.value)
@@ -55,16 +56,16 @@ export default function HotelNationality(props: props) {
     const suggestedCount = term ? 0 : suggested.length
 
     return (
-        <Popover opened={opened} onChange={(next) => next ? setOpened(true) : close()} width="target" position="bottom-start" shadow="md" trapFocus={false}>
+        <Popover opened={opened} onChange={(next) => next ? open() : close()} width="target" {...DROPDOWN_POPOVER}>
             <Popover.Target>
-                <div>
+                <div ref={fieldRef}>
                     <FieldTrigger
                         label="Guest nationality"
                         icon={selected ? <CountryFlag code={selected.code} /> : <Global className="size-5" />}
                         value={selected ? selected.name : props.value ? props.value.toUpperCase() : undefined}
                         placeholder="Select nationality"
                         opened={opened}
-                        onToggle={() => opened ? close() : setOpened(true)}
+                        onToggle={() => opened ? close() : open()}
                     />
                 </div>
             </Popover.Target>

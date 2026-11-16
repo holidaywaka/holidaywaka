@@ -1,5 +1,5 @@
 import ratehawkConfig, { RatehawkError } from "../services/ratwhawk.config.js";
-import { JsonResponse, ServerError } from "../../../config/utilities.js"
+import { JsonResponse, ServerError, USER_TYPES } from "../../../config/utilities.js"
 import logger from "../../../middleware/logger.js";
 import db from "../repository/hotels.repository.js";
 import { HotelContentStatus } from "../../../database/models/hotelModel.js";
@@ -16,9 +16,14 @@ import {
     searchHotelsByRegion,
     toStayParams,
 } from "../services/hotel-search.service.js";
+import SendMail from "../../../emails/emailConfig.js";
 import {
+    approveHotelBooking,
     cancelHotelBooking,
     createHotelCheckout,
+    submitGuestComplaint,
+    trackGuestBooking,
+    unapproveHotelBooking,
     downloadVoucher,
     getBooking,
     handleEtgWebhook,
@@ -203,9 +208,14 @@ export const singleHotelBooking = async (req, res) => {
 export const hotelBookingVoucher = async (req, res) => {
     try {
         const voucher = await downloadVoucher(req.params.id)
-        res.setHeader("Content-Type", voucher.contentType || "application/pdf")
-        res.setHeader("Content-Disposition", `attachment; filename="${voucher.filename}"`)
-        return res.status(200).send(voucher.file)
+        // Raw bytes with an exact length; no-store so a browser never replays an earlier (bad) copy
+        res.status(200).set({
+            "Content-Type": "application/pdf",
+            "Content-Length": String(voucher.file.length),
+            "Content-Disposition": `attachment; filename="${voucher.filename}"`,
+            "Cache-Control": "no-store",
+        })
+        return res.end(voucher.file)
     } catch (error) {
         return HotelError(res, error, 'Error downloading hotel voucher')
     }
@@ -230,6 +240,7 @@ export const adminHotelBookings = async (req, res) => {
     try {
         const result = await listBookings({
             status: req.query.status,
+            approved: req.query.approved,
             search: req.query.search,
             // Express 5 req.query is read-only, so the validator's toInt() never reaches here: a string limit breaks the SQL
             page: Number(req.query.page) || 1,
@@ -274,5 +285,63 @@ export const adminRefreshHotelBooking = async (req, res) => {
         return JsonResponse(res, 200, { message: 'Booking refreshed from the supplier', data: booking })
     } catch (error) {
         return HotelError(res, error, 'Error refreshing hotel booking')
+    }
+}
+
+const adminName = (user) => [user?.firstname ?? user?.firstName, user?.lastname ?? user?.lastName].filter(Boolean).join(" ") || user?.email || "admin"
+
+export const adminApproveHotelBooking = async (req, res) => {
+    try {
+        const booking = await approveHotelBooking(req.params.id, { by: adminName(req.user) })
+        await db.Notifies.create({ userId: req.user.id, title: 'Hotel booking approved', content: `Hotel booking ${booking.reference} at ${booking.hotel_name} was approved` })
+        return JsonResponse(res, 200, { message: booking.status === 'booking' ? 'Approved. Booking it with the hotel now.' : 'Booking approved', data: booking })
+    } catch (error) {
+        return HotelError(res, error, 'Error approving hotel booking')
+    }
+}
+
+export const adminUnapproveHotelBooking = async (req, res) => {
+    try {
+        const booking = await unapproveHotelBooking(req.params.id, { by: adminName(req.user), reason: req.body?.reason })
+        await db.Notifies.create({ userId: req.user.id, title: 'Hotel booking unapproved', content: `Hotel booking ${booking.reference} at ${booking.hotel_name} was unapproved (now ${booking.status})` })
+        const outcome = { cancelled: 'Unapproved and cancelled with the hotel', payment_declined: 'Unapproved and payment declined' }[booking.status] ?? 'Booking unapproved'
+        return JsonResponse(res, 200, { message: outcome, data: booking })
+    } catch (error) {
+        return HotelError(res, error, 'Error unapproving hotel booking')
+    }
+}
+
+// ======================== guest: manage booking ====================
+
+export const trackHotelBooking = async (req, res) => {
+    try {
+        return JsonResponse(res, 200, await trackGuestBooking({ reference: req.body.reference, email: req.body.email }))
+    } catch (error) {
+        return HotelError(res, error, 'Error tracking hotel booking')
+    }
+}
+
+export const hotelBookingComplaint = async (req, res) => {
+    try {
+        const sent = await submitGuestComplaint({
+            reference: req.body.reference,
+            email: req.body.email,
+            subject: req.body.subject,
+            message: req.body.message,
+            sendMail: SendMail,
+            // Admin bell notification; a site without an admin account still delivers the emails
+            notifyAdmin: async (title, content) => {
+                const admin = await db.Users.findOne({ where: { role: USER_TYPES.admin }, attributes: ['id'] })
+                if (admin) await db.Notifies.create({ userId: admin.id, title, content })
+            },
+        })
+        return JsonResponse(res, 201, {
+            message: sent.ratehawk
+                ? 'Your message has been sent to Holidaywaka and to our hotel partner. We will get back to you by email.'
+                : 'Your message has been sent to Holidaywaka. We will get back to you by email.',
+            data: sent,
+        })
+    } catch (error) {
+        return HotelError(res, error, 'Error sending hotel booking complaint')
     }
 }

@@ -7,7 +7,7 @@ import { Airplane, Car, Location } from 'iconsax-reactjs'
 import type { findplaceProps, transportNodesProps } from 'global'
 import { Apis, Get } from '~/services/apis'
 import { PickupOptions } from '~/components/utils'
-import { FieldTrigger, Highlight, SearchInput, useListNavigation } from '~/routes/general/home/components/hotels/partials/search-field'
+import { DROPDOWN_POPOVER, FieldTrigger, GroupHeading, Highlight, SearchInput, useDropdownField, useListNavigation } from '~/routes/general/home/components/hotels/partials/search-field'
 
 export type TransferPlace = {
     id: string
@@ -19,6 +19,21 @@ export type TransferPlace = {
 }
 
 type PlaceOption = transportNodesProps & findplaceProps
+
+const airport = (address: string, place_id: string, city: string, country: string, iata: string) =>
+    ({ address, place_id, city, country, iata, description: address, airportStart: true }) as unknown as PlaceOption
+
+/** Shown before typing so the pick up list is never empty (ids as returned by the transfer supplier) */
+const POPULAR_AIRPORTS: PlaceOption[] = [
+    airport('Airport Murtala Muhammed International', 'ChIJhRTXUeeROxARmk_Rp3PtIvI', 'Lagos', 'Nigeria', 'LOS'),
+    airport('Airport Nnamdi Azikiwe International', 'ChIJBV2qPJlwThARvViDvpFOwm0', 'Abuja', 'Nigeria', 'ABV'),
+    airport('Airport Port Harcourt International Airport', 'ChIJJ7E-txvXaRARy4noSPrIAtI', 'Port Harcourt', 'Nigeria', 'PHC'),
+    airport('Airport Dubai International', 'ChIJaQ4mkwZdXz4R6e5IegDUleY', 'Dubai', 'United Arab Emirates', 'DXB'),
+    airport('Airport Heathrow', 'ChIJ6W3FzTRydkgRZ0H2Q1VT548', 'London', 'Great Britain', 'LHR'),
+    airport('Airport Charles de Gaulle', 'ChIJW89MjgM-5kcRLKZbL5jgKwQ', 'Paris', 'France', 'CDG'),
+    airport('Airport John F. Kennedy New York', 'ChIJR0lA1VBmwokR8BGfSBOyT-w', 'New York', 'USA', 'JFK'),
+    airport('Airport OR Tambo International', 'ChIJwymiBTgUlR4R1iEoeUAcv7M', 'Johannesburg', 'South Africa', 'JNB'),
+]
 
 /**
  * origin: airports first, falling back to any place.
@@ -39,6 +54,8 @@ type props = {
     start_country?: string | null
     /** Shown instead of the search when the field cannot be used yet */
     disabledReason?: string
+    /** Destination: city of the pick up, used to suggest drop off places before the guest types */
+    suggestFrom?: string | null
 }
 
 function toPlace(item: PlaceOption): TransferPlace {
@@ -53,7 +70,8 @@ function toPlace(item: PlaceOption): TransferPlace {
 }
 
 export default function TransferPlaceField(props: props) {
-    const [opened, setOpened] = React.useState(false)
+    // Scrolls the field clear of the sticky header before opening, so the list always opens fully below it
+    const { ref: fieldRef, opened, setOpened, open } = useDropdownField()
     const [search, setSearch] = React.useState("")
     const [debounced] = useDebouncedValue(search.trim(), 400)
     const canSearch = debounced.length >= 2 && !props.disabledReason
@@ -77,7 +95,35 @@ export default function TransferPlaceField(props: props) {
         staleTime: 60 * 1000,
     })
 
-    const options = React.useMemo(() => canSearch ? data ?? [] : [], [canSearch, data])
+    // Before typing: popular airports (pick up) or places in the pick up's city (drop off)
+    const suggestionsQuery = useQuery<PlaceOption[]>({
+        queryKey: ['transfer-place-suggestions', props.origin, props.suggestFrom, props.start_country],
+        queryFn: async () => {
+            const lookup = (term: string) => Get(`${Apis.iway.find_place}?term=${encodeURIComponent(term)}&place_id=${props.origin}&start_country=${encodeURIComponent(props.start_country ?? '')}`)
+                .then((response) => Array.isArray(response) ? response as findplaceProps[] : [])
+                .catch(() => [] as findplaceProps[])
+            // The city itself plus its hotels, the most common drop offs
+            const results = (await Promise.all([lookup(props.suggestFrom ?? ''), lookup(`${props.suggestFrom} hotel`)])).flat()
+            const country = String(props.start_country ?? '').toLowerCase()
+            const seen = new Set<string>()
+            const unique = results
+                .map((el) => ({ ...el, airportStart: false }) as PlaceOption)
+                .filter((el) => !seen.has(String(el.place_id)) && Boolean(seen.add(String(el.place_id))))
+            // The search is global ("Lagos" also matches Portugal): keep places in the pick up's country. Country
+            // names differ between the two supplier lists ("Great Britain" vs "UK"), so fall back when none match
+            const local = unique.filter((el) => !country || String(el.description ?? '').toLowerCase().includes(country))
+            return (local.length ? local : unique).slice(0, 8)
+        },
+        enabled: opened && props.mode === 'destination' && Boolean(props.origin && props.suggestFrom) && !props.disabledReason,
+        staleTime: 10 * 60 * 1000,
+    })
+    const suggestions = React.useMemo<PlaceOption[]>(() => {
+        if (props.mode === 'destination') return suggestionsQuery.data ?? []
+        return POPULAR_AIRPORTS
+    }, [props.mode, suggestionsQuery.data])
+    const showingSuggestions = !canSearch && search.trim().length < 2
+
+    const options = React.useMemo(() => canSearch ? data ?? [] : showingSuggestions ? suggestions : [], [canSearch, data, showingSuggestions, suggestions])
 
     function close() {
         setOpened(false)
@@ -94,9 +140,9 @@ export default function TransferPlaceField(props: props) {
     const icon = props.value?.airport ? <Airplane className="size-5" /> : props.mode === 'place' ? <Car className="size-5" /> : <Location className="size-5" />
 
     return (
-        <Popover opened={opened} onChange={(next) => next ? setOpened(true) : close()} width="target" position="bottom-start" shadow="md" trapFocus={false}>
+        <Popover opened={opened} onChange={(next) => next ? open() : close()} width="target" {...DROPDOWN_POPOVER}>
             <Popover.Target>
-                <div>
+                <div ref={fieldRef}>
                     <FieldTrigger
                         label={props.label}
                         icon={icon}
@@ -109,7 +155,7 @@ export default function TransferPlaceField(props: props) {
                         placeholder={props.placeholder}
                         opened={opened}
                         error={props.error}
-                        onToggle={() => opened ? close() : setOpened(true)}
+                        onToggle={() => opened ? close() : open()}
                         onClear={() => props.onChange(null)}
                     />
                 </div>
@@ -128,7 +174,11 @@ export default function TransferPlaceField(props: props) {
                         activeId={nav.activeId}
                     />
                     <div id={listId} role="listbox" aria-label={`${props.label} locations`} className="p-1 h-fit max-h-80 overflow-x-hidden overflow-y-auto scrolls">
-                        {!canSearch && (
+                        {showingSuggestions && suggestions.length > 0 && (
+                            <GroupHeading>{props.mode === 'destination' ? `Popular in ${props.suggestFrom}` : 'Popular airports'}</GroupHeading>
+                        )}
+                        {showingSuggestions && props.mode === 'destination' && suggestionsQuery.isLoading && <div className="p-2"><Skeleton count={3} height={44} className="mb-1" /></div>}
+                        {!canSearch && (search.trim().length === 1 || (suggestions.length === 0 && !suggestionsQuery.isLoading)) && (
                             <div className="p-4 text-center text-sm text-zinc-500">
                                 {search.trim().length === 1 ? 'Type at least 2 characters to search' : props.mode === 'origin' ? 'Start typing an airport, city or address' : 'Start typing a hotel, address or airport'}
                             </div>
@@ -148,12 +198,12 @@ export default function TransferPlaceField(props: props) {
                                 aria-selected={nav.active === index}
                                 onMouseEnter={() => nav.setActive(index)}
                                 onClick={() => select(item)}
-                                className={`flex items-center gap-3 px-2 py-2 rounded-md cursor-pointer transition-colors ${nav.active === index ? 'bg-slate-100' : ''}`}>
+                                className={`flex items-center gap-3 px-2 py-2 rounded-lg cursor-pointer transition-colors ${nav.active === index ? 'bg-primary/[0.06]' : ''}`}>
                                 <span className={`shrink-0 size-9 rounded-md flex items-center justify-center ${item.airportStart ? 'bg-primary/10 text-primary' : 'bg-zinc-100 text-zinc-600'}`}>
                                     {item.airportStart ? <Airplane className="size-5" /> : <Location className="size-5" />}
                                 </span>
                                 <span className="min-w-0 flex-1">
-                                    <span className="block text-sm font-semibold text-zinc-900 truncate"><Highlight text={`${item.address ?? ''}`} term={debounced} /></span>
+                                    <span className="block text-sm font-semibold text-zinc-900 truncate"><Highlight text={`${item.address ?? ''}`.replace(/^Airport /, '')} term={debounced} /></span>
                                     <span className="block text-xs text-zinc-500 truncate">
                                         {item.airportStart ? [item.city, item.country].filter(Boolean).join(', ') : item.sub_name}
                                     </span>

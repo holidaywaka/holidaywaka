@@ -79,14 +79,17 @@ export async function downloadFile(endpoint: string, fallbackName: string) {
     }
     const disposition = response.headers.get('content-disposition') ?? ''
     const filename = disposition.match(/filename="?([^"]+)"?/)?.[1] ?? fallbackName
-    const url = URL.createObjectURL(await response.blob())
+    const blob = await response.blob()
+    if (blob.size === 0) throw new Error('The file came back empty. Please try again in a few minutes.')
+    const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
     link.download = filename
     document.body.appendChild(link)
     link.click()
     link.remove()
-    URL.revokeObjectURL(url)
+    // Revoking straight after click() can hand the browser's download/PDF viewer a dead URL (an empty PDF)
+    setTimeout(() => URL.revokeObjectURL(url), 60_000)
 }
 
 export const NewApis = {
@@ -219,6 +222,10 @@ export const NewApis = {
         admin_retry: (id: string) => `hotels/admin/bookings/${id}/retry`,
         admin_refresh: (id: string) => `hotels/admin/bookings/${id}/refresh`,
         admin_voucher: (id: string) => `hotels/admin/bookings/${id}/voucher`,
+        admin_approve: (id: string) => `hotels/admin/bookings/${id}/approve`,
+        admin_unapprove: (id: string) => `hotels/admin/bookings/${id}/unapprove`,
+        track_booking: "hotels/bookings/track",
+        booking_complaint: "hotels/bookings/track/complaint",
         admin_sync: "hotels/admin/sync",
     }
 }

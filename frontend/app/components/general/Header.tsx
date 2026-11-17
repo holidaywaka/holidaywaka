@@ -51,7 +51,7 @@ function DesktopNav({ links, isActive }: { links: { title: string; url: string }
                         onFocus={(event) => moveTo(event.currentTarget)}
                         onBlur={hide}
                         aria-current={active ? 'page' : undefined}
-                        className={`relative z-10 inline-flex items-center h-10 px-3 xl:px-4 rounded-full text-[0.92rem] xl:text-[0.95rem] font-semibold whitespace-nowrap transition-colors duration-200 ${focusRing} ${active ? 'text-primary' : 'text-zinc-600 hover:text-primary'}`}>
+                        className={`relative z-10 inline-flex items-center h-10 px-3 xl:px-4 rounded-full text-[0.92rem] xl:text-[0.95rem] font-semibold whitespace-nowrap transition-colors duration-200 ${focusRing} ${active ? 'text-primary' : 'text-primary hover:bg-primary hover:text-secondary'}`}>
                         {item.title}
                         <span aria-hidden className={`absolute left-3 right-3 xl:left-4 xl:right-4 bottom-0.5 h-0.5 rounded-full bg-secondary origin-center transition-transform duration-300 ${active ? 'scale-x-100' : 'scale-x-0'}`} />
                     </Linked>
@@ -88,7 +88,7 @@ function MenuPanel({ open, onClose, links, isActive, showManage, onContact }: {
     }, [open, onClose])
 
     return (
-        <div className={`lg:hidden fixed inset-0 z-[60] ${open ? '' : 'pointer-events-none'}`} aria-hidden={!open}>
+        <div className={`lg:hidden fixed inset-0 z-60 ${open ? '' : 'pointer-events-none'}`} aria-hidden={!open}>
             <div onClick={onClose} className={`absolute inset-0 bg-primary/40 backdrop-blur-[2px] transition-opacity duration-300 ${open ? 'opacity-100' : 'opacity-0'}`} />
             <div ref={panelRef} id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu"
                 className={`absolute right-0 top-0 h-full w-[min(22rem,88vw)] bg-white shadow-2xl flex flex-col transition-[transform,visibility] duration-300 ease-out motion-reduce:transition-none ${open ? 'translate-x-0 visible' : 'translate-x-full invisible'}`}>
@@ -105,7 +105,7 @@ function MenuPanel({ open, onClose, links, isActive, showManage, onContact }: {
                             return (
                                 <li key={item.url}>
                                     <Linked to={item.url} onClick={onClose} aria-current={active ? 'page' : undefined}
-                                        className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors ${focusRing} ${active ? 'bg-primary/[0.06]' : 'hover:bg-primary/[0.04]'}`}>
+                                        className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors ${focusRing} ${active ? 'bg-primary/6' : 'hover:bg-primary/4'}`}>
                                         <span className={`shrink-0 size-10 rounded-lg flex items-center justify-center transition-colors ${active ? 'bg-primary text-white' : 'bg-champagne text-rose-deep group-hover:bg-blush'}`}>
                                             {meta ? <meta.Icon className="size-5" /> : null}
                                         </span>
@@ -122,7 +122,7 @@ function MenuPanel({ open, onClose, links, isActive, showManage, onContact }: {
 
                     {showManage && (
                         <Linked to="/manage-booking" onClick={onClose}
-                            className={`mt-4 flex items-center gap-3 rounded-xl border border-primary/10 px-3 py-3 hover:border-primary/25 hover:bg-primary/[0.03] transition-colors ${focusRing}`}>
+                            className={`mt-4 flex items-center gap-3 rounded-xl border border-primary/10 px-3 py-3 hover:border-primary/25 hover:bg-primary/3 transition-colors ${focusRing}`}>
                             <FiClipboard className="shrink-0 size-5 text-primary" aria-hidden />
                             <span className="min-w-0 flex-1">
                                 <span className="block text-sm font-semibold text-zinc-900">Manage a booking</span>
@@ -136,7 +136,7 @@ function MenuPanel({ open, onClose, links, isActive, showManage, onContact }: {
                     <Linked to="/login" onClick={onClose} className={`h-11 inline-flex items-center justify-center gap-2 rounded-full bg-primary text-sm font-semibold text-white hover:bg-primary/90 transition-colors ${focusRing}`}>
                         <FiUser /> Sign in
                     </Linked>
-                    <button type="button" onClick={() => { onClose(); onContact() }} className={`h-11 inline-flex items-center justify-center gap-2 rounded-full border border-primary/20 text-sm font-semibold text-primary hover:bg-primary/[0.05] cursor-pointer transition-colors ${focusRing}`}>
+                    <button type="button" onClick={() => { onClose(); onContact() }} className={`h-11 inline-flex items-center justify-center gap-2 rounded-full border border-primary/20 text-sm font-semibold text-primary hover:bg-primary/5 cursor-pointer transition-colors ${focusRing}`}>
                         <FiMail /> Contact us
                     </button>
                 </div>
@@ -175,7 +175,7 @@ export default function Header() {
             </Modal>
 
             <header className={`sticky top-0 z-50 bg-white/90 backdrop-blur-md backdrop-saturate-150 transition-[box-shadow,border-color] duration-300 border-b ${scrolled ? 'border-transparent shadow-[0_10px_30px_-14px_rgba(0,39,34,0.28)]' : 'border-primary/10 shadow-none'}`}>
-                <div className="w-[94%] max-w-7xl mx-auto h-16 lg:h-[4.5rem] flex items-center gap-3 xl:gap-6">
+                <div className="w-[94%] max-w-7xl mx-auto h-16 lg:h-18 flex items-center gap-3 xl:gap-6">
                     <Linked to="/" className={`shrink-0 rounded-md ${focusRing}`}>
                         <img src={logo} alt="HolidayWaka home" className="h-8 xl:h-9 w-auto block" />
                     </Linked>
